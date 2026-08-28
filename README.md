@@ -1,53 +1,54 @@
-# STFT-Based Speech Enhancement
-
 ## Project Overview
 
-This project investigates speech enhancement for noisy audio signals using short-time Fourier transform (STFT) based processing. Speech recordings are often affected by background noise, which reduces intelligibility and makes audio analysis more difficult. The aim of this project is to analyse noisy speech in the time-frequency domain and apply spectral subtraction to reduce noise while preserving the main speech components.
+This project aims to investigate speech enhancement for noisy audio signals using digital signal processing methods. Speech recordings in real environments are often affected by background noise from traffic, fans, rooms, computers, or other acoustic sources. This noise can reduce speech intelligibility and make further audio analysis more difficult. The goal of this project is to analyse noisy speech signals and apply frequency-domain processing methods to reduce noise while preserving the main speech components.
+
+The main planned method is based on the short-time Fourier transform (STFT). Since speech is a non-stationary signal, its frequency content changes over time. A single Fourier transform can show the overall frequency content of a signal, but it cannot show when different frequency components occur. STFT is therefore suitable for speech processing because it divides the signal into short overlapping frames and applies the Fourier transform to each frame. This produces a time-frequency representation, usually displayed as a spectrogram.
+
+In this project, a clean speech recording will be used as the reference signal. A noisy version of the speech will be created by adding controlled background noise, such as white noise or recorded environmental noise. The noisy speech will then be processed using STFT-based enhancement. The initial enhancement method will be spectral subtraction, where the estimated noise spectrum is reduced from the noisy speech spectrum. If time permits, the project may also compare spectral subtraction with Wiener filtering or simple time-frequency masking.
 
 ## Background and Motivation
 
-Speech enhancement is an important topic in audio signal processing, hearing technology, telecommunications, and speech recognition. In real-world environments, speech can be corrupted by background sounds such as traffic, fans, room noise, or other speakers. Since speech is a non-stationary signal, a single Fourier transform is not enough to describe how its frequency content changes over time. STFT provides a practical way to analyse speech frame by frame using windowing, FFT, and overlap between frames.
+Speech enhancement is an important topic in audio signal processing. It is used in mobile communication, hearing aids, online meetings, automatic speech recognition, and audio restoration. In many practical situations, the desired speech signal is mixed with unwanted noise. A simple time-domain analysis is often not enough to separate speech and noise because both may overlap in time. Frequency-domain and time-frequency methods provide more useful information about where noise energy is located.
 
-This project is closely related to ELEC5305 topics including sampling, aliasing, DFT/FFT, filtering, audio features, spectrograms, STFT, inverse STFT, and overlap-add reconstruction.
+This project is closely related to the topics studied in ELEC5305. Sampling rate and aliasing are important when reading and processing digital audio signals. The DFT and FFT are used to analyse frequency components. Windowing is required when applying STFT to short frames of speech. Overlap between frames is important for smooth reconstruction. Inverse STFT and overlap-add are used to convert the processed signal back into the time domain. Audio features such as RMS energy, zero-crossing rate, and spectral centroid can also be used to describe and compare the noisy and enhanced signals.
 
-## Proposed Method
+The project is designed to connect theory with practical implementation. Instead of only applying a built-in denoising tool, the project will show the main processing stages: reading audio, generating noise, analysing waveforms and spectra, applying STFT, modifying the frequency-domain representation, reconstructing the signal, and evaluating the result.
 
-The project will use MATLAB to process a clean speech signal and generate a noisy version by adding background noise. The noisy speech will be analysed using waveform plots, frequency spectra, and spectrograms. STFT will be applied by dividing the signal into overlapping windowed frames and computing the FFT of each frame.
+## Proposed Methodology
 
-A spectral subtraction method will then be used to estimate and reduce the noise component in the frequency domain. The enhanced speech will be reconstructed using inverse STFT and overlap-add. The final result will be compared with the original noisy signal.
+The project will be implemented mainly in MATLAB. First, a short clean speech recording will be selected or recorded. The signal will be converted to mono if necessary and resampled to a suitable sampling rate, such as 16 kHz or 22.05 kHz. A noisy speech signal will then be generated by adding white noise or environmental background noise at a controlled signal-to-noise ratio.
 
-## Course Concepts Used
+The clean and noisy signals will be analysed in the time domain and frequency domain. Waveform plots will be used to show amplitude changes over time. FFT-based spectra will be used to observe the frequency content of the signals. Spectrograms will be generated to show how the frequency content changes over time.
 
-- Sampling rate and normalized frequency
-- Aliasing and Nyquist theorem
-- DFT and FFT
-- Digital filtering
-- Windowing
-- STFT and spectrogram analysis
-- Inverse STFT
-- Overlap-add reconstruction
-- Audio features such as RMS energy, zero-crossing rate, and spectral centroid
+For the main enhancement stage, the noisy speech will be divided into overlapping frames. A window function, such as a Hann window or square-root Hann window, will be applied to each frame. The FFT will transform each windowed frame into the frequency domain. The noise spectrum will be estimated from a noise-only segment or from low-energy frames. Spectral subtraction will then reduce the estimated noise magnitude from the noisy speech magnitude spectrum. The noisy speech phase will be kept for reconstruction.
+
+After processing the spectrum, the enhanced frames will be transformed back into the time domain using inverse FFT. The final enhanced signal will be reconstructed using inverse STFT and overlap-add. The reconstructed signal will then be compared with the noisy input and the clean reference signal.
+
+The evaluation will include both visual and quantitative analysis. The project will compare waveforms, spectra, and spectrograms before and after enhancement. If the clean reference signal is available, signal-to-noise ratio improvement will be calculated. Audio features such as RMS energy, zero-crossing rate, and spectral centroid may also be compared to observe how the enhancement affects the signal characteristics.
 
 ## Expected Outcomes
 
-The expected outcomes of this project include:
+The expected outcome is a MATLAB-based speech enhancement system that demonstrates STFT-based analysis and frequency-domain noise reduction. The project should produce waveform plots, frequency spectra, and spectrograms for the clean, noisy, and enhanced speech signals. It should also provide a basic quantitative evaluation using SNR improvement and selected audio features.
 
-- Clean, noisy, and enhanced speech waveform plots
-- Frequency spectrum comparison
-- Spectrogram comparison before and after enhancement
-- Basic speech quality evaluation using SNR improvement
-- Audio feature comparison using RMS energy, zero-crossing rate, and spectral centroid
-- MATLAB implementation of an STFT-based speech enhancement system
+The final result is expected to show that STFT-based processing can reduce background noise while preserving important speech structure. The enhancement may not be perfect, especially for complex background noise, but the project will demonstrate the practical use of sampling, FFT, windowing, STFT, inverse STFT, overlap-add reconstruction, filtering concepts, and audio feature analysis.
 
-## Tools
+## Timeline
 
-- MATLAB
-- GitHub
-- GitHub Pages
-- Audio signal samples in WAV format
+| Week | Task |
+|---|---|
+| 1-2 | Select project topic and create GitHub project site |
+| 3-5 | Review speech enhancement, STFT, spectral subtraction, and audio feature literature |
+| 6-7 | Prepare clean and noisy speech data |
+| 8-9 | Implement waveform, spectrum, and spectrogram analysis in MATLAB |
+| 10 | Implement STFT-based spectral subtraction |
+| 11 | Reconstruct enhanced speech using inverse STFT and overlap-add |
+| 12 | Evaluate results using SNR and audio features |
+| 13 | Complete final report, figures, code documentation, and GitHub updates |
 
 ## References
 
-1. Boll, S. F. (1979). Suppression of acoustic noise in speech using spectral subtraction. IEEE Transactions on Acoustics, Speech, and Signal Processing.
-2. Allen, J. B., and Rabiner, L. R. (1977). A unified approach to short-time Fourier analysis and synthesis. Proceedings of the IEEE.
+1. Boll, S. F. (1979). Suppression of acoustic noise in speech using spectral subtraction. IEEE Transactions on Acoustics, Speech, and Signal Processing, 27(2), 113-120.
+
+2. Allen, J. B., and Rabiner, L. R. (1977). A unified approach to short-time Fourier analysis and synthesis. Proceedings of the IEEE, 65(11), 1558-1564.
+
 3. Loizou, P. C. (2013). Speech Enhancement: Theory and Practice. CRC Press.
