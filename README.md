@@ -1,5 +1,3 @@
-# elec5305-speech-enhancement
-STFT-based speech enhancement project for ELEC5305.
 # STFT-Based Speech Enhancement
 
 ## Project Overview
