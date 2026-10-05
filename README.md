@@ -181,7 +181,7 @@ However, these results should be interpreted as validation of a controlled oracl
 
 The spectrogram comparison below shows the noisy and enhanced speech for the main 5 dB experiment. After enhancement, the broadband background energy is reduced while the main speech-related time-frequency structure remains visible.
 
-![Noisy and enhanced speech spectrograms](./results/figures/noisy_vs_enhanced_spectrogram.png)
+![Noisy and enhanced speech spectrograms](./results/noisy_vs_enhanced_spectrogram.png)
 
 *Figure 1. Noisy and enhanced speech spectrograms for the preliminary 5 dB oracle-mask experiment.*
 
@@ -189,7 +189,7 @@ The spectrogram comparison below shows the noisy and enhanced speech for the mai
 
 The preliminary experiment was repeated at target input SNRs of 0 dB, 5 dB, and 10 dB. The enhanced output achieved a higher SNR than the noisy input under all three controlled conditions.
 
-![Input and output SNR comparison](./results/figures/input_output_snr.png)
+![Input and output SNR comparison](./results/input_output_snr.png)
 
 *Figure 2. Measured input and output SNR under the three preliminary white-noise conditions.*
 
