@@ -114,3 +114,67 @@ Compare enhancement quality with speaker-identity preservation
 
 **Final research objective:**  
 Determine whether an enhancement method that produces better conventional signal-quality metrics also preserves speaker identity more effectively.
+
+## Response to Feedback 1
+
+Feedback 1 identified that the original project question focused mainly on whether STFT-based enhancement could reduce background noise. Although this is useful for demonstrating core DSP concepts, the basic effectiveness of classical speech enhancement is already well established.
+
+In response, the project has been revised to investigate whether improvement in conventional speech-enhancement metrics also corresponds to preservation of speaker identity.
+
+The classical STFT processing pipeline remains the main student-implemented ELEC5305 component. The current oracle-mask baseline will be extended to practical noise-estimated spectral subtraction. In the final project, this classical system will be compared with pretrained DeepFilterNet, while a frozen pretrained ECAPA-TDNN model will be used to evaluate speaker-identity preservation.
+
+This revision shifts the project from simply asking whether noise can be reduced to investigating whether the enhancement process also preserves information about the person speaking.
+
+## Work Completed to Date
+
+Audio Processing Report 1 established the preliminary signal-processing baseline for the project.
+
+The completed MATLAB implementation currently includes:
+
+- loading and preprocessing clean speech;
+- controlled white Gaussian noise generation;
+- reproducible random-noise generation using fixed seeds;
+- time-domain waveform analysis;
+- FFT-based frequency-domain analysis;
+- manual STFT frame processing;
+- Hann windowing with 75% overlap;
+- an oracle Wiener-style soft mask;
+- inverse FFT reconstruction;
+- overlap-add synthesis;
+- clean, noisy, and enhanced waveform comparison;
+- spectrogram comparison;
+- SNR, RMS, and zero-crossing-rate evaluation;
+- experiments at target input SNRs of 0 dB, 5 dB, and 10 dB;
+- generation of clean, noisy, and enhanced WAV files.
+
+## Preliminary Results
+
+The Report 1 oracle-mask experiment was evaluated under three controlled white-noise conditions.
+
+| Target Input SNR | Measured Input SNR | Output SNR | SNR Improvement |
+|---:|---:|---:|---:|
+| 0 dB | 0.01 dB | 13.97 dB | 13.97 dB |
+| 5 dB | 5.01 dB | 17.26 dB | 12.26 dB |
+| 10 dB | 10.00 dB | 20.37 dB | 10.37 dB |
+
+At the main 5 dB condition, the measured input SNR increased from approximately 5.01 dB to an output SNR of approximately 17.26 dB, corresponding to an improvement of approximately 12.26 dB.
+
+The multi-SNR experiment also showed higher output SNR than input SNR under all three tested conditions.
+
+These results demonstrate that the controlled noise-generation, STFT analysis, time-frequency masking, inverse transformation, overlap-add reconstruction, and evaluation pipeline are functioning as intended.
+
+However, these results should be interpreted as validation of a controlled oracle baseline rather than the performance of a practical speech-enhancement system.
+
+## Current Limitations
+
+The preliminary experiment currently has several important limitations:
+
+- only one speaker and one short speech segment have been evaluated;
+- only white Gaussian noise has been tested;
+- the oracle mask uses the known clean speech and added noise;
+- the current evaluation focuses mainly on signal-level measures;
+- speaker-identity preservation has not yet been evaluated.
+
+The most important limitation is the oracle assumption. In a practical speech-enhancement system, the clean speech and exact added noise are not normally available. The next classical processing stage will therefore estimate the noise spectrum directly from the observed noisy speech.
+
+These limitations motivate the progression toward practical spectral subtraction, multi-speaker evaluation, environmental noise, and speaker-embedding analysis.
