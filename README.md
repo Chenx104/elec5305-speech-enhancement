@@ -177,6 +177,22 @@ These results demonstrate that the controlled noise-generation, STFT analysis, t
 
 However, these results should be interpreted as validation of a controlled oracle baseline rather than the performance of a practical speech-enhancement system.
 
+### Spectrogram Comparison
+
+The spectrogram comparison below shows the noisy and enhanced speech for the main 5 dB experiment. After enhancement, the broadband background energy is reduced while the main speech-related time-frequency structure remains visible.
+
+![Noisy and enhanced speech spectrograms](./results/figures/noisy_vs_enhanced_spectrogram.png)
+
+*Figure 1. Noisy and enhanced speech spectrograms for the preliminary 5 dB oracle-mask experiment.*
+
+### Multi-SNR Comparison
+
+The preliminary experiment was repeated at target input SNRs of 0 dB, 5 dB, and 10 dB. The enhanced output achieved a higher SNR than the noisy input under all three controlled conditions.
+
+![Input and output SNR comparison](./results/figures/input_output_snr.png)
+
+*Figure 2. Measured input and output SNR under the three preliminary white-noise conditions.*
+
 ## Current Limitations
 
 The preliminary experiment currently has several important limitations:
