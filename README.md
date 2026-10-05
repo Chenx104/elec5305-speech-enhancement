@@ -167,7 +167,9 @@ The Report 1 oracle-mask experiment was evaluated under three controlled white-n
 | 5 dB | 5.01 dB | 17.26 dB | 12.26 dB |
 | 10 dB | 10.00 dB | 20.37 dB | 10.37 dB |
 
-At the main 5 dB condition, the measured input SNR increased from approximately 5.01 dB to an output SNR of approximately 17.26 dB, corresponding to an improvement of approximately 12.26 dB.
+At the main 5 dB condition, the measured input SNR was approximately
+5.01 dB, while the output SNR after enhancement was approximately
+17.26 dB, corresponding to an improvement of approximately 12.26 dB.
 
 The multi-SNR experiment also showed higher output SNR than input SNR under all three tested conditions.
 
