@@ -12,9 +12,16 @@ The next stage will extend this controlled baseline toward a practical noise-est
 
 Following Feedback 1, the final project has been revised from a general demonstration of STFT-based noise reduction to a broader research question: whether improvements in conventional speech-enhancement metrics also preserve speaker identity.
 
-The student-developed classical STFT enhancement system will remain the main ELEC5305 signal-processing component. It will later be compared with a pretrained DeepFilterNet speech-enhancement model. Speaker-identity preservation will be evaluated using a frozen pretrained ECAPA-TDNN speaker-embedding model.
+The student-implemented classical STFT enhancement pipeline will remain
+the main ELEC5305 signal-processing component. It will later be compared
+with a pretrained DeepFilterNet speech-enhancement model. Speaker-identity
+preservation will be evaluated using a frozen pretrained ECAPA-TDNN
+speaker-embedding model.
 
-DeepFilterNet and ECAPA-TDNN will be used only as external pretrained reference and evaluation tools. They will not be presented as student-developed models.
+DeepFilterNet and ECAPA-TDNN are external pretrained tools. They will be
+used only as a modern enhancement reference and a speaker-identity
+evaluation tool, respectively, and will not be presented as
+student-developed models.
 
 
 ## Revised Research Questions
