@@ -147,6 +147,16 @@ The completed MATLAB implementation currently includes:
 - experiments at target input SNRs of 0 dB, 5 dB, and 10 dB;
 - generation of clean, noisy, and enhanced WAV files.
 
+### Report 1 Files
+
+The complete preliminary MATLAB experiment is available below:
+
+- [Report 1 MATLAB Live Script](./report1/Report1%20ChenxinZhang.mlx)
+- [Report 1 PDF](./report1/Report1%20ChenxinZhang.pdf)
+- [Clean speech](./report1/clean_speech.wav)
+- [Noisy speech](./report1/noisy_speech.wav)
+- [Enhanced speech](./report1/enhanced_speech.wav)
+
 ## Preliminary Results
 
 The Report 1 oracle-mask experiment was evaluated under three controlled white-noise conditions.
