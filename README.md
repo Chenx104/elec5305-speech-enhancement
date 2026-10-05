@@ -1,54 +1,109 @@
+# From SNR to Speaker Embeddings: Does Speech Enhancement Preserve Speaker Identity?
+
 ## Project Overview
 
-This project aims to investigate speech enhancement for noisy audio signals using digital signal processing methods. Speech recordings in real environments are often affected by background noise from traffic, fans, rooms, computers, or other acoustic sources. This noise can reduce speech intelligibility and make further audio analysis more difficult. The goal of this project is to analyse noisy speech signals and apply frequency-domain processing methods to reduce noise while preserving the main speech components.
+This project investigates whether speech enhancement can improve signal quality while preserving speaker-identity information.
 
-The main planned method is based on the short-time Fourier transform (STFT). Since speech is a non-stationary signal, its frequency content changes over time. A single Fourier transform can show the overall frequency content of a signal, but it cannot show when different frequency components occur. STFT is therefore suitable for speech processing because it divides the signal into short overlapping frames and applies the Fourier transform to each frame. This produces a time-frequency representation, usually displayed as a spectrogram.
+The project is being developed progressively through ELEC5305 Audio Processing Report 1, Audio Processing Report 2, and the final project.
 
-In this project, a clean speech recording will be used as the reference signal. A noisy version of the speech will be created by adding controlled background noise, such as white noise or recorded environmental noise. The noisy speech will then be processed using STFT-based enhancement. The initial enhancement method will be spectral subtraction, where the estimated noise spectrum is reduced from the noisy speech spectrum. If time permits, the project may also compare spectral subtraction with Wiener filtering or simple time-frequency masking.
+In Report 1, a controlled STFT-based speech-enhancement pipeline was implemented in MATLAB using an oracle Wiener-style soft mask. This stage validated the main signal-processing pipeline, including controlled noise generation, FFT and STFT analysis, time-frequency masking, inverse FFT, overlap-add reconstruction, waveform and spectrogram comparison, and quantitative evaluation.
 
-## Background and Motivation
+The next stage will extend this controlled baseline toward a practical noise-estimated spectral-subtraction system. Unlike the oracle experiment, the practical system will estimate noise information from the observed noisy speech rather than using the known clean speech and added noise.
 
-Speech enhancement is an important topic in audio signal processing. It is used in mobile communication, hearing aids, online meetings, automatic speech recognition, and audio restoration. In many practical situations, the desired speech signal is mixed with unwanted noise. A simple time-domain analysis is often not enough to separate speech and noise because both may overlap in time. Frequency-domain and time-frequency methods provide more useful information about where noise energy is located.
+Following Feedback 1, the final project has been revised from a general demonstration of STFT-based noise reduction to a broader research question: whether improvements in conventional speech-enhancement metrics also preserve speaker identity.
 
-This project is closely related to the topics studied in ELEC5305. Sampling rate and aliasing are important when reading and processing digital audio signals. The DFT and FFT are used to analyse frequency components. Windowing is required when applying STFT to short frames of speech. Overlap between frames is important for smooth reconstruction. Inverse STFT and overlap-add are used to convert the processed signal back into the time domain. Audio features such as RMS energy, zero-crossing rate, and spectral centroid can also be used to describe and compare the noisy and enhanced signals.
+The student-developed classical STFT enhancement system will remain the main ELEC5305 signal-processing component. It will later be compared with a pretrained DeepFilterNet speech-enhancement model. Speaker-identity preservation will be evaluated using a frozen pretrained ECAPA-TDNN speaker-embedding model.
 
-The project is designed to connect theory with practical implementation. Instead of only applying a built-in denoising tool, the project will show the main processing stages: reading audio, generating noise, analysing waveforms and spectra, applying STFT, modifying the frequency-domain representation, reconstructing the signal, and evaluating the result.
+DeepFilterNet and ECAPA-TDNN will be used only as external pretrained reference and evaluation tools. They will not be presented as student-developed models.
 
-## Proposed Methodology
 
-The project will be implemented mainly in MATLAB. First, a short clean speech recording will be selected or recorded. The signal will be converted to mono if necessary and resampled to a suitable sampling rate, such as 16 kHz or 22.05 kHz. A noisy speech signal will then be generated by adding white noise or environmental background noise at a controlled signal-to-noise ratio.
+## Revised Research Questions
 
-The clean and noisy signals will be analysed in the time domain and frequency domain. Waveform plots will be used to show amplitude changes over time. FFT-based spectra will be used to observe the frequency content of the signals. Spectrograms will be generated to show how the frequency content changes over time.
+**RQ1:** Does improvement in conventional speech-enhancement metrics correspond to preservation of speaker identity in a modern pretrained speaker-embedding model?
 
-For the main enhancement stage, the noisy speech will be divided into overlapping frames. A window function, such as a Hann window or square-root Hann window, will be applied to each frame. The FFT will transform each windowed frame into the frequency domain. The noise spectrum will be estimated from a noise-only segment or from low-energy frames. Spectral subtraction will then reduce the estimated noise magnitude from the noisy speech magnitude spectrum. The noisy speech phase will be kept for reconstruction.
+**RQ2:** How do classical STFT spectral subtraction and a modern neural enhancer trade noise reduction against speaker-identity preservation?
 
-After processing the spectrum, the enhanced frames will be transformed back into the time domain using inverse FFT. The final enhanced signal will be reconstructed using inverse STFT and overlap-add. The reconstructed signal will then be compared with the noisy input and the clean reference signal.
 
-The evaluation will include both visual and quantitative analysis. The project will compare waveforms, spectra, and spectrograms before and after enhancement. If the clean reference signal is available, signal-to-noise ratio improvement will be calculated. Audio features such as RMS energy, zero-crossing rate, and spectral centroid may also be compared to observe how the enhancement affects the signal characteristics.
+## Project Development / Progression
 
-## Expected Outcomes
+The project is structured as a progressive development from a controlled signal-processing experiment to a practical enhancement system and finally to a speaker-identity investigation.
 
-The expected outcome is a MATLAB-based speech enhancement system that demonstrates STFT-based analysis and frequency-domain noise reduction. The project should produce waveform plots, frequency spectra, and spectrograms for the clean, noisy, and enhanced speech signals. It should also provide a basic quantitative evaluation using SNR improvement and selected audio features.
+### Stage 1 — Audio Processing Report 1: Controlled STFT Baseline
 
-The final result is expected to show that STFT-based processing can reduce background noise while preserving important speech structure. The enhancement may not be perfect, especially for complex background noise, but the project will demonstrate the practical use of sampling, FFT, windowing, STFT, inverse STFT, overlap-add reconstruction, filtering concepts, and audio feature analysis.
+Clean speech  
+↓  
+Add controlled white Gaussian noise  
+↓  
+FFT / STFT analysis  
+↓  
+Oracle Wiener-style soft mask  
+↓  
+Inverse FFT  
+↓  
+Overlap-add reconstruction  
+↓  
+Enhanced speech  
+↓  
+SNR / RMS / ZCR / waveform / spectrogram evaluation
 
-## Timeline
+**Purpose:**  
+Validate the complete STFT-based speech-enhancement and reconstruction pipeline under controlled conditions.
 
-| Week | Task |
-|---|---|
-| 1-2 | Select project topic and create GitHub project site |
-| 3-5 | Review speech enhancement, STFT, spectral subtraction, and audio feature literature |
-| 6-7 | Prepare clean and noisy speech data |
-| 8-9 | Implement waveform, spectrum, and spectrogram analysis in MATLAB |
-| 10 | Implement STFT-based spectral subtraction |
-| 11 | Reconstruct enhanced speech using inverse STFT and overlap-add |
-| 12 | Evaluate results using SNR and audio features |
-| 13 | Complete final report, figures, code documentation, and GitHub updates |
+**Main limitation:**  
+The oracle mask uses the known clean speech and added noise, so it is not a practical enhancement system.
 
-## References
 
-1. Boll, S. F. (1979). Suppression of acoustic noise in speech using spectral subtraction. IEEE Transactions on Acoustics, Speech, and Signal Processing, 27(2), 113-120.
+### Stage 2 — Audio Processing Report 2: Practical Classical Enhancement
 
-2. Allen, J. B., and Rabiner, L. R. (1977). A unified approach to short-time Fourier analysis and synthesis. Proceedings of the IEEE, 65(11), 1558-1564.
+Noisy speech  
+↓  
+STFT  
+↓  
+Noise-spectrum estimation  
+↓  
+Spectral subtraction  
+↓  
+Spectral floor  
+↓  
+Inverse STFT  
+↓  
+Overlap-add reconstruction  
+↓  
+Enhanced speech  
+↓  
+Objective evaluation
 
-3. Loizou, P. C. (2013). Speech Enhancement: Theory and Practice. CRC Press.
+**Purpose:**  
+Replace the oracle baseline with a practical classical enhancement method that operates without access to the clean reference signal.
+
+**Planned outcome:**  
+A student-implemented noise-estimated spectral-subtraction system that can be used as the classical baseline in the final project.
+
+
+### Stage 3 — Final Project: Speech Enhancement and Speaker Identity
+
+Multi-speaker clean speech  
+↓  
+Add controlled environmental noise  
+↓  
+Noisy speech at multiple SNR conditions  
+↓  
+
+Classical spectral subtraction  
+**versus**  
+Pretrained DeepFilterNet  
+
+↓  
+
+Clean / Noisy / Classical Enhanced / Neural Enhanced speech  
+↓  
+Signal-quality evaluation: SNR / SI-SDR / STOI  
+↓  
+ECAPA-TDNN speaker embeddings  
+↓  
+Genuine and impostor speaker-verification scores  
+↓  
+Compare enhancement quality with speaker-identity preservation
+
+**Final research objective:**  
+Determine whether an enhancement method that produces better conventional signal-quality metrics also preserves speaker identity more effectively.
