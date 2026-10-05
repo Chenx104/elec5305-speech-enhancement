@@ -151,8 +151,8 @@ The completed MATLAB implementation currently includes:
 
 The complete preliminary MATLAB experiment is available below:
 
-- [Report 1 MATLAB Live Script](./report1/Report1%20ChenxinZhang.mlx)
-- [Report 1 PDF](./report1/Report1%20ChenxinZhang.pdf)
+- [Report 1 PDF](./report1/Report1%20ChenxinZhang.pdf) — view the full report and results
+- [Report 1 MATLAB Live Script](./report1/Report1%20ChenxinZhang.mlx?raw=1) — download and open in MATLAB
 - [Clean speech](./report1/clean_speech.wav)
 - [Noisy speech](./report1/noisy_speech.wav)
 - [Enhanced speech](./report1/enhanced_speech.wav)
