@@ -31,6 +31,11 @@ Development selected **α=3** for mean SI-SDR gain and **α=0.5** for external-v
 
 See the [test summary](results/tables/test/test_summary.csv), [development selection](results/tables/development/development_selection.csv), [primary comparisons](results/tables/test/primary_comparisons.csv) and [α analysis figure](results/figures/alpha_analysis.pdf).
 
+## Browse the MATLAB Experiment
+
+- [View the experiment code and saved outputs online](final_project_preview.md)
+- [Download the executable MATLAB Live Script](final_project.mlx)
+
 ## Repository structure
 
 ```text
