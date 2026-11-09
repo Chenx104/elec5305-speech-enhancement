@@ -1,0 +1,3 @@
+fig=r2_plot_spectra(waveSignals,waveNames,fs,cfg, ...
+    'Car-idle 5 dB, shared spectrogram colour limits',1);
+r2_save_figure(fig,outputFolder,'figure06_spectrograms');

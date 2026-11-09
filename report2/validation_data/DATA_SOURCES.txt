@@ -1,0 +1,19 @@
+Speech: LibriSpeech, OpenSLR 12 (CC BY 4.0).
+Original corpus: https://www.openslr.org/12
+Distribution used: https://huggingface.co/datasets/openslr/librispeech_asr
+Subset: clean/test (LibriSpeech test-clean).
+Selected first utterance with transcript >= 180 characters for the first three distinct speaker IDs in dataset rows 0-199; audio duration must be >=5 seconds.
+Selection uses only metadata and duration, before any enhancement results.
+Local filenames retain the speaker/chapter/utterance identifiers.
+Processing: convert to mono, resample to 8 kHz, take the first 5 seconds; no silence padding is added.
+
+Rain: ESC-50 / ESC-10 subset, file 1-17367-A-10.wav.
+Dataset: https://github.com/karolpiczak/ESC-50
+Audio: https://raw.githubusercontent.com/karolpiczak/ESC-50/master/audio/1-17367-A-10.wav
+Source recording: unlocki door to mod rain.wav by cognito perceptu, Freesound ID 17367, CC0.
+https://freesound.org/people/cognito%20perceptu/sounds/17367/
+ESC-10 subset is CC BY 3.0. See ESC50_LICENSE.txt for dataset and clip attribution.
+Processing: mono, resample from 44.1 kHz to 8 kHz, use all 5 seconds.
+
+Car idle: original course lab/car_idle.mp3.zip; same input as the main example, first 5 seconds after rate conversion.
+White noise: MATLAB rng seeds 5305, 5306, 5307, each used across all three speakers with independent controlled SNR scaling.

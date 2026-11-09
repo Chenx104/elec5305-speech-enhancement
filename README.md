@@ -6,6 +6,7 @@ Coursework and final research project for ELEC5305 at the University of Sydney.
 
 - [Project Proposal](proposal.md)
 - [Report 1](report1/)
+- [Report 2 — Practical Spectral Subtraction](report2/)
 - [Final Research Project](final_project/)
 
 ## Final Research Project
