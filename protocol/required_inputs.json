@@ -1,0 +1,12 @@
+{
+  "A": [
+    "material_audit/candidate_utterance_roles_cropped.csv",
+    "material_audit/candidate_speaker_roles.csv",
+    "noise_audit/candidate_noise_sources.csv",
+    "noise_audit/candidate_snr_conditions.csv"
+  ],
+  "B": [
+    "selection/selected_parameters.json",
+    "analysis_rules.json"
+  ]
+}

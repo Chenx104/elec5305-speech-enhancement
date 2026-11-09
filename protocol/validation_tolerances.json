@@ -1,0 +1,18 @@
+{
+  "status": "Written before new inference and before statistical validation",
+  "scope": "Pinned Apple-silicon CPU environment and original unrounded data; do not derive tolerances from displayed decimal rounding",
+  "absolute_tolerances": {
+    "SI_SDR_and_noise_reduction_dB": 1e-9,
+    "STOI_and_STOI_change": 1e-10,
+    "speech_retention_percentage_points": 1e-8,
+    "cosine_scores": 1e-12,
+    "EER_BER_FAR_FRR_percentage_points": 1e-10,
+    "threshold": 1e-12,
+    "same_draw_bootstrap_percentage_points": 1e-10
+  },
+  "exact_checks": ["alpha choices", "trial counts", "case labels and counts", "decoded DFN repeat outputs", "ECAPA repeat embeddings in pinned environment"],
+  "original_ecapa_repeat_max_abs_error": 0.0,
+  "development_ties": {"quality_dB": 1e-9, "EER_fraction": 1e-12, "threshold_BER_fraction": 1e-12},
+  "bootstrap_validation": "First validate MATLAB implementation with the original saved draws, separating algorithm error from RNG changes. Fresh MATLAB draws are a separate prespecified reproducibility/Monte-Carlo check later.",
+  "failure_policy": "Stop and diagnose any violation; never tune alpha, thresholds or tolerance to pass newly observed results"
+}

@@ -1,208 +1,127 @@
-# From SNR to Speaker Embeddings: Does Speech Enhancement Preserve Speaker Identity?
+# When Better Denoising Does Not Mean Better Speaker Verification: An Empirical Study of Speech Enhancement and Speaker Identity Preservation
 
-## Project Overview
+Chenxin Zhang · ELEC5305 Speech and Audio Processing · University of Sydney
 
-This project investigates whether speech enhancement can improve signal quality while preserving speaker-identity information.
+## Overview
 
-The project is being developed progressively through ELEC5305 Audio Processing Report 1, Audio Processing Report 2, and the final project.
+This project investigates why improvements in speech enhancement do not always translate into better speaker verification. It combines student-developed MATLAB spectral subtraction, pretrained DeepFilterNet3, and a fixed SpeechBrain ECAPA-TDNN verifier to examine how signal quality, subtraction strength and noise conditions relate to speaker identity.
 
-In Report 1, a controlled STFT-based speech-enhancement pipeline was implemented in MATLAB using an oracle Wiener-style soft mask. This stage validated the main signal-processing pipeline, including controlled noise generation, FFT and STFT analysis, time-frequency masking, inverse FFT, overlap-add reconstruction, waveform and spectrogram comparison, and quantitative evaluation.
+The complete experiment has been executed, and its formal results have been checked against the final report. **[final_project.mlx](final_project.mlx) is the single main Run All entry point**, with saved outputs and English analysis throughout its 25 sections.
 
-The next stage will extend this controlled baseline toward a practical noise-estimated spectral-subtraction system. Unlike the oracle experiment, the practical system will estimate noise information from the observed noisy speech rather than using the known clean speech and added noise.
+## Implementation and experiment
 
-Following Feedback 1, the final project has been revised from a general demonstration of STFT-based noise reduction to a broader research question: whether improvements in conventional speech-enhancement metrics also preserve speaker identity.
+The student-developed MATLAB code implements STFT analysis, weighted overlap-add reconstruction, percentile and simplified VAD noise estimation, power-domain spectral subtraction, and speech/noise component decomposition. Analysis uses 16 kHz audio, a 32 ms periodic Hann window, an 8 ms hop and a 1024-point FFT. The default subtraction strength is α=1.5 and the power floor is β=0.02.
 
-The student-implemented classical STFT enhancement pipeline will remain
-the main ELEC5305 signal-processing component. It will later be compared
-with a pretrained DeepFilterNet speech-enhancement model. Speaker-identity
-preservation will be evaluated using a frozen pretrained ECAPA-TDNN
-speaker-embedding model.
+All 39 MATLAB local functions are in the notebook's final appendix. Python scripts prepare the fixed inputs and call the external models. VOICEBOX supplies the tracking noise estimator and an implementation comparison. DeepFilterNet3 and ECAPA are used without training or fine-tuning; ECAPA produces 192-dimensional embeddings for cosine scoring.
 
-DeepFilterNet and ECAPA-TDNN are external pretrained tools. They will be
-used only as a modern enhancement reference and a speaker-identity
-evaluation tool, respectively, and will not be presented as
-student-developed models.
+Development contains **624 mixtures**. The formal test contains **1080 mixtures**, using 20 enrolled speakers, 10 external test speakers, nine noise sources and SNRs of −5, 0, 5 and 10 dB. The noise groups are relatively low-variation environments, high-variation environments and four-reader babble. Development and testing use separate source recordings, noise sources and external-speaker groups; the enrolled speakers are shared.
 
+## Verified findings
 
-## Revised Research Questions
+Quality means use the **720 enrolled-speaker test mixtures**. External-verification EER uses **720 genuine and 7200 external-impostor comparisons** per method, with the primary enrollment references. SI-SDR gain and STOI change are relative to Noisy; lower EER is better.
 
-**RQ1:** Does improvement in conventional speech-enhancement metrics correspond to preservation of speaker identity in a modern pretrained speaker-embedding model?
+| Method | Mean SI-SDR gain (dB) | Mean STOI change | External EER (%) |
+|---|---:|---:|---:|
+| Noisy | 0.000 | 0.0000 | 7.083 |
+| Percentile spectral subtraction, α=1.5 | +0.929 | -0.0037 | 8.764 |
+| Tracking spectral subtraction | +1.167 | +0.0016 | 7.639 |
+| DeepFilterNet3 | +6.258 | +0.0291 | 9.028 |
 
-**RQ2:** How do classical STFT spectral subtraction and a modern neural enhancer trade noise reduction against speaker-identity preservation?
+DeepFilterNet3 improves SI-SDR and STOI but has a higher EER than Noisy. Default percentile subtraction improves SI-SDR while slightly reducing STOI, and also increases EER. These results demonstrate the importance of evaluating speech enhancement against its downstream verification task, rather than relying on signal-quality metrics alone.
 
+Development selected **α=3** for mean SI-SDR gain and **α=0.5** for external-verification EER. The common Noisy development decision threshold is approximately **0.270079**. EER uses the score distribution; BER evaluates errors at a fixed decision threshold. Paired speaker-cluster bootstrap analysis uses 20,000 resamples.
 
-## Project Development / Progression
+See the [test summary](results/tables/test/test_summary.csv), [development selection](results/tables/development/development_selection.csv), [primary comparisons](results/tables/test/primary_comparisons.csv) and [α analysis figure](results/figures/alpha_analysis.pdf).
 
-The project is structured as a progressive development from a controlled signal-processing experiment to a practical enhancement system and finally to a speaker-identity investigation.
+## Repository structure
 
-### Stage 1 — Audio Processing Report 1: Controlled STFT Baseline
+```text
+final_project.mlx              Complete stepwise experiment and local MATLAB functions
+Inspect_Results.m              Read included formal results and display EER
+src/scripts/                   Batch input preparation and external-model adapters
+src/materials/                 Deterministic data preparation scripts
+src/matlab/README.md            Directory layout retained for the Python initializer
+protocol/                      Fixed settings, manifests, model identities and requirements
+runtime.local.example.json     Template for private local configuration
+results/tables/development/    Development metrics, thresholds and parameter selection
+results/tables/test/           Test metrics, comparisons, cases and robustness results
+results/figures/               Seven report figures in PDF format
+results/report/                Figure/table reconstruction scripts and numerical inputs
+docs/                          Setup, provenance and third-party notices
+requirements-inspection.txt    Lightweight Python inspection/plotting requirements
+.gitignore                     Excludes private settings and generated material
+```
 
-Clean speech  
-↓  
-Add controlled white Gaussian noise  
-↓  
-FFT / STFT analysis  
-↓  
-Oracle Wiener-style soft mask  
-↓  
-Inverse FFT  
-↓  
-Overlap-add reconstruction  
-↓  
-Enhanced speech  
-↓  
-SNR / RMS / ZCR / waveform / spectrogram evaluation
+The retained `src/matlab/` directory supports a historical directory link created by the Python initializer. The MATLAB implementations themselves are local functions in the MLX. See [code and data provenance](docs/CODE_AND_DATA_PROVENANCE.md).
 
-**Purpose:**  
-Validate the complete STFT-based speech-enhancement and reconstruction pipeline under controlled conditions.
+## Requirements and setup
 
-**Main limitation:**  
-The oracle mask uses the known clean speech and added noise, so it is not a practical enhancement system.
+Full Run All requires **separately obtained datasets, models and external tools**. The validated environment uses:
 
+- MATLAB **R2025b**, Signal Processing Toolbox and Audio Toolbox.
+- Python **3.12**, with versions recorded in [protocol/requirements.lock.txt](protocol/requirements.lock.txt).
+- Apple-silicon macOS for the fixed **DeepFilterNet v0.5.6** executable and the existing POSIX shell/symlink adapters.
+- The pinned DeepFilterNet3 ONNX archive, SpeechBrain ECAPA model files and VOICEBOX revision.
+- LibriSpeech test-clean/dev-clean, the specified DEMAND recordings and the fixed babble sources.
 
-### Stage 2 — Audio Processing Report 2: Practical Classical Enhancement
+Follow [data and model setup](docs/DATA_AND_MODELS.md) for the exact directory layout, sources and revisions. To create the full Python environment from the project root:
 
-Noisy speech  
-↓  
-STFT  
-↓  
-Noise-spectrum estimation  
-↓  
-Spectral subtraction  
-↓  
-Spectral floor  
-↓  
-Inverse STFT  
-↓  
-Overlap-add reconstruction  
-↓  
-Enhanced speech  
-↓  
-Objective evaluation
+```sh
+python3.12 -m venv .venv
+.venv/bin/python -m pip install -r protocol/requirements.lock.txt
+cp runtime.local.example.json runtime.local.json
+```
 
-**Purpose:**  
-Replace the oracle baseline with a practical classical enhancement method that operates without access to the clean reference signal.
+Edit the three fields in `runtime.local.json`:
 
-**Planned outcome:**  
-A student-implemented noise-estimated spectral-subtraction system that can be used as the classical baseline in the final project.
+| Field | Set it to |
+|---|---|
+| `python` | The intended Python executable, for example `.venv/bin/python` after the setup above |
+| `materials_root` | The directory containing `material_audit/` and `noise_audit/` in the documented layout |
+| `tools_root` | The directory containing the fixed DeepFilterNet executable/archive, `ecapa_model/` and `voicebox_source/` |
 
+Paths may be absolute or relative to the project root. Use actual local locations; the supplied example is a layout template. Keep `runtime.local.json` private and excluded from Git.
 
-### Stage 3 — Final Project: Speech Enhancement and Speaker Identity
+## Run or inspect the experiment
 
-Multi-speaker clean speech  
-↓  
-Add controlled environmental noise  
-↓  
-Noisy speech at multiple SNR conditions  
-↓  
+### Complete recomputation
 
-Classical spectral subtraction  
-**versus**  
-Pretrained DeepFilterNet  
+1. Obtain the materials and tools, install the dependencies and configure `runtime.local.json`.
+2. Set MATLAB **Current Folder** to this project directory.
+3. Open **`final_project.mlx`** and click **Run All**.
+4. After completion, inspect the outputs and save the Live Script.
 
-↓  
+Sections 1–11 explain the DSP on a fixed example; Sections 12–14 generate development data and select parameters; Sections 15–25 process test data, calculate metrics and present the analysis. Each section retains its code, results and interpretation. Each Run All creates a new `runs/experiment_en_*` directory and recomputes the experiment. It does not automatically reuse previous results.
 
-Clean / Noisy / Classical Enhanced / Neural Enhanced speech  
-↓  
-Signal-quality evaluation: SNR / SI-SDR / STOI  
-↓  
-ECAPA-TDNN speaker embeddings  
-↓  
-Genuine and impostor speaker-verification scores  
-↓  
-Compare enhancement quality with speaker-identity preservation
+A run generates input audio, traditional and DeepFilterNet outputs, embeddings and scores, development selections, test summaries, case analyses, bootstrap results, diagnostic files and logs. The completed run is marked by `stepwise_completed.mat`. Batch progress and warnings are written to that run's logs. Full recomputation requires processing time and disk space.
 
-**Final research objective:**  
-Determine whether an enhancement method that produces better conventional signal-quality metrics also preserves speaker identity more effectively.
+### Inspect included results without model inference
 
-## Response to Feedback 1
+Open the MLX to read its saved tables and figures without clicking Run All. Alternatively, with MATLAB Current Folder set to the project directory, run:
 
-Feedback 1 identified that the original project question focused mainly on whether STFT-based enhancement could reduce background noise. Although this is useful for demonstrating core DSP concepts, the basic effectiveness of classical speech enhancement is already well established.
+```matlab
+Inspect_Results
+```
 
-In response, the project has been revised to investigate whether improvement in conventional speech-enhancement metrics also corresponds to preservation of speaker identity.
+This reads the included test summary and displays the main EER comparison. It does not need source audio, Python or pretrained models. [Included result tables](results/tables/) and [report figures](results/figures/) are already available; they are not regenerated merely by opening the project.
 
-The classical STFT processing pipeline remains the main student-implemented ELEC5305 component. The current oracle-mask baseline will be extended to practical noise-estimated spectral subtraction. In the final project, this classical system will be compared with pretrained DeepFilterNet, while a frozen pretrained ECAPA-TDNN model will be used to evaluate speaker-identity preservation.
+For optional report figure/table reconstruction from the included numerical inputs:
 
-This revision shifts the project from simply asking whether noise can be reduced to investigating whether the enhancement process also preserves information about the person speaking.
+```sh
+python3.12 -m venv .venv-inspect
+.venv-inspect/bin/python -m pip install -r requirements-inspection.txt
+.venv-inspect/bin/python results/report/scripts/make_figures.py
+.venv-inspect/bin/python results/report/scripts/make_tables.py
+```
 
-## Work Completed to Date
+These scripts regenerate plots and LaTeX table bodies under `results/report/`; they do not rerun enhancement or speaker verification. Published files exclude run directories, source/generated audio, model weights, private configuration and virtual environments. A completed local `runs/` directory may remain on the author's computer but is ignored by Git.
 
-Audio Processing Report 1 established the preliminary signal-processing baseline for the project.
+## Data and external software attribution
 
-The completed MATLAB implementation currently includes:
+- **LibriSpeech:** V. Panayotov, G. Chen, D. Povey and S. Khudanpur; [OpenSLR corpus](https://www.openslr.org/12/), CC BY 4.0. Also supplies the readers used to construct babble.
+- **DEMAND:** J. Thiemann, N. Ito and E. Vincent; [official dataset record](https://zenodo.org/records/1227121).
+- **VOICEBOX:** Mike Brookes / Imperial College London; [speech-processing toolbox](https://github.com/ImperialCollegeLondon/sap-voicebox), used for tracking noise estimation and implementation comparison.
+- **SpeechBrain / ECAPA-TDNN:** [pretrained speaker model](https://huggingface.co/speechbrain/spkrec-ecapa-voxceleb); ECAPA-TDNN by B. Desplanques, J. Thienpondt and K. Demuynck.
+- **DeepFilterNet3:** H. Schröter and colleagues; [DeepFilterNet project](https://github.com/Rikorose/DeepFilterNet), using the fixed executable and model described above.
 
-- loading and preprocessing clean speech;
-- controlled white Gaussian noise generation;
-- reproducible random-noise generation using fixed seeds;
-- time-domain waveform analysis;
-- FFT-based frequency-domain analysis;
-- manual STFT frame processing;
-- Hann windowing with 75% overlap;
-- an oracle Wiener-style soft mask;
-- inverse FFT reconstruction;
-- overlap-add synthesis;
-- clean, noisy, and enhanced waveform comparison;
-- spectrogram comparison;
-- SNR, RMS, and zero-crossing-rate evaluation;
-- experiments at target input SNRs of 0 dB, 5 dB, and 10 dB;
-- generation of clean, noisy, and enhanced WAV files.
-
-### Report 1 Files
-
-The complete preliminary MATLAB experiment is available below:
-
-- [Report 1 PDF](./report1/Report1%20ChenxinZhang.pdf) — view the full report and results
-- [Report 1 MATLAB Live Script](./report1/Report1%20ChenxinZhang.mlx?raw=1) — download and open in MATLAB
-- [Clean speech](./report1/clean_speech.wav)
-- [Noisy speech](./report1/noisy_speech.wav)
-- [Enhanced speech](./report1/enhanced_speech.wav)
-
-## Preliminary Results
-
-The Report 1 oracle-mask experiment was evaluated under three controlled white-noise conditions.
-
-| Target Input SNR | Measured Input SNR | Output SNR | SNR Improvement |
-|---:|---:|---:|---:|
-| 0 dB | 0.01 dB | 13.97 dB | 13.97 dB |
-| 5 dB | 5.01 dB | 17.26 dB | 12.26 dB |
-| 10 dB | 10.00 dB | 20.37 dB | 10.37 dB |
-
-At the main 5 dB condition, the measured input SNR was approximately
-5.01 dB, while the output SNR after enhancement was approximately
-17.26 dB, corresponding to an improvement of approximately 12.26 dB.
-
-The multi-SNR experiment also showed higher output SNR than input SNR under all three tested conditions.
-
-These results demonstrate that the controlled noise-generation, STFT analysis, time-frequency masking, inverse transformation, overlap-add reconstruction, and evaluation pipeline are functioning as intended.
-
-However, these results should be interpreted as validation of a controlled oracle baseline rather than the performance of a practical speech-enhancement system.
-
-### Spectrogram Comparison
-
-The spectrogram comparison below shows the noisy and enhanced speech for the main 5 dB experiment. After enhancement, the broadband background energy is reduced while the main speech-related time-frequency structure remains visible.
-
-![Noisy and enhanced speech spectrograms](./results/noisy_vs_enhanced_spectrogram.png)
-
-*Figure 1. Noisy and enhanced speech spectrograms for the preliminary 5 dB oracle-mask experiment.*
-
-### Multi-SNR Comparison
-
-The preliminary experiment was repeated at target input SNRs of 0 dB, 5 dB, and 10 dB. The enhanced output achieved a higher SNR than the noisy input under all three controlled conditions.
-
-![Input and output SNR comparison](./results/input_output_snr.png)
-
-*Figure 2. Measured input and output SNR under the three preliminary white-noise conditions.*
-
-## Current Limitations
-
-The preliminary experiment currently has several important limitations:
-
-- only one speaker and one short speech segment have been evaluated;
-- only white Gaussian noise has been tested;
-- the oracle mask uses the known clean speech and added noise;
-- the current evaluation focuses mainly on signal-level measures;
-- speaker-identity preservation has not yet been evaluated.
-
-The most important limitation is the oracle assumption. In a practical speech-enhancement system, the clean speech and exact added noise are not normally available. The next classical processing stage will therefore estimate the noise spectrum directly from the observed noisy speech.
-
-These limitations motivate the progression toward practical spectral subtraction, multi-speaker evaluation, environmental noise, and speaker-embedding analysis.
+Dataset sources, licensing information and third-party software acknowledgements are documented in the [third-party notices](docs/THIRD_PARTY_NOTICES.md) and [source and license audit](protocol/SOURCE_AND_LICENSE.md). Original dataset audio is not redistributed.

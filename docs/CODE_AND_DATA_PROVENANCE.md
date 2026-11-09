@@ -1,0 +1,13 @@
+# Code and data provenance
+
+The final manual experiment entry point is `final_project.mlx`. It contains all 25 experimental sections and the student-developed MATLAB functions in its final appendix. These implement STFT analysis, weighted overlap-add reconstruction, percentile and simplified VAD noise estimation, spectral subtraction, conditional speech/noise decomposition, development selection, scoring and statistical analysis. Python adapters and deterministic material preparation remain in `src/scripts` and `src/materials`.
+
+VOICEBOX supplies minimum-statistics tracking and an implementation comparison. DeepFilterNet3 and SpeechBrain ECAPA are external pretrained models; neither is trained or fine-tuned here. They are not student-developed models. See `THIRD_PARTY_NOTICES.md` and `DATA_AND_MODELS.md` for sources and fixed dependencies.
+
+The final complete local run is `experiment_en_tp498abfc3_ace1_447e_96e9_2010c85be3ff`: 624 development mixtures and 1080 test mixtures. Its completion marker and final results are present. Every published development/test CSV with a matching result filename was verified byte-identical to that run during cleanup. No completed result was overwritten. The seven report figures and their curated plotting inputs are retained; their original analysis scripts remain unchanged.
+
+Some report plotting inputs duplicate canonical tables under `results/tables`. Those copies are intentional: the unchanged plotting scripts read their own `source_data` directory. The separate MATLAB helper copies and synthetic demonstration were archived after reference checks; the merged notebook uses local functions. A small `src/matlab/README.md` retains the directory expected by the unchanged Python initializer's historical MATLAB-directory symlink.
+
+The portable noise manifest's descriptive Path column is relative to the materials root. All scientific IDs, samples, seeds, crop times and model/sample hashes are preserved. Original archive identifiers remain in `protocol/upstream_identifiers.json`. Historical package hash manifests were archived because their old filenames no longer describe this completed submission.
+
+No source audio or model weights are included in the upload file set. The complete local `runs/` directory is retained in place to preserve its original absolute references, but is excluded by `.gitignore` and is not an upload artifact. Private runtime configuration is archived outside the submission directory; create it locally from the example before a new full execution. Report provenance and any required assistance disclosure remain separate student deliverables.

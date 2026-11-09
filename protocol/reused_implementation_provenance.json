@@ -1,0 +1,21 @@
+{
+  "legacy_source": "historical_10_speaker_study/Alpha_Development_source.m",
+  "legacy_source_sha256": "e9324e61b2ace6395b4756ada60997cf02196ce1f6711056d24255b0e9524ec6",
+  "unchanged_functions": {
+    "p_stft.m": "6c60199423da28f274cca78aeebbad33bc01ddc32fcc051b7c41dcd2221ccd3b",
+    "p_istft.m": "6710605ed595b6c7346e417dd99f094db9f19fc9670622da05af01ddb72d881e",
+    "p_noise_psd.m": "7370d8b9616699944a59eb95b729aef54d53203f674f20565640b3b6977a7733",
+    "p_spectral_gain.m": "687e9e0d508bbf3a85b883b496de7e74dbe37efa63f2f495e00b0e7de1ec4cac",
+    "p_metrics.m": "94599b0fe5c7637621bda326c11d26fdf549f9c4c37402676ba7b9bb94150399"
+  },
+  "fixed_ECAPA_revision": "0f99f2d0ebe89ac095bcc5903c4dd8f72b367286",
+  "fixed_ECAPA_files_sha256": {
+    "classifier.ckpt": "fd9e3634fe68bd0a427c95e354c0c677374f62b3f434e45b78599950d860d535",
+    "embedding_model.ckpt": "0575cb64845e6b9a10db9bcb74d5ac32b326b8dc90352671d345e2ee3d0126a2",
+    "hyperparams.yaml": "6f78854fa04ba59e761437b76a2575d3aba5e5016de3e9b69f0c9a5077fb1a41",
+    "label_encoder.txt": "e13c3a167bb4112685670ee896d20e2b565af16b3a4ceeaa8689fa4d22adb8b9",
+    "mean_var_norm_emb.ckpt": "cd70225b05b37be64fc5a95e24395d804231d43f74b2e1e5a513db7b69b34c33"
+  },
+  "fixed_DFN_binary_sha256": "4601e7f4e4c03e59a4c5b5000216ef3add3e808799cfccd95e14e83ea4611081",
+  "fixed_DFN_model_archive_sha256": "c94d91f70911001c946e0fabb4aa9adc37045f45a03b56008cb0c8244cb63616"
+}

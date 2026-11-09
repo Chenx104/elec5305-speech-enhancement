@@ -1,0 +1,16 @@
+{
+  "status": "Written before executing fresh MATLAB resampling",
+  "MATLAB_generator": "twister",
+  "seed": 530804,
+  "repetitions": 20000,
+  "strata": "target and external identities separately, within sex; same draws shared by methods",
+  "interval": "95% percentile; linear quantile interpolation",
+  "comparisons": ["default SS - Noisy", "DeepFilterNet - Noisy", "identity SS - default SS", "identity SS - quality SS"],
+  "endpoints": ["external EER", "common-threshold BER"],
+  "primary_registration": "fixed",
+  "secondary_registration": "synchronous multiplicities",
+  "point_estimate_tolerance_percentage_points": 1e-10,
+  "interval_endpoint_tolerance_percentage_points": 0.2,
+  "reason": "Engineering reproducibility limit for finite Monte Carlo endpoints, not a theoretical error bound or a significance criterion; original 1500-draw observation is not used to choose this limit.",
+  "failure_policy": "Preserve draws/results and diagnose; do not change seed, repetitions, tolerance, parameters, or conclusions to obtain a pass. Report maximum difference even when passed."
+}

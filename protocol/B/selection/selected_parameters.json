@@ -1,0 +1,120 @@
+{
+  "stage": "gate B sealed: development-selected parameters and fixed analysis rules",
+  "quality_alpha": 3.0,
+  "identity_alpha": 0.5,
+  "quality_method": "SS_a3p0",
+  "identity_method": "SS_a0p5",
+  "default_method": "SS_a1p5",
+  "common_threshold": 0.27007881166952363,
+  "per_method_thresholds": {
+    "Adapter": {
+      "threshold": 0.26873472356634653,
+      "FAR": 0.028125,
+      "FRR": 0.09375,
+      "BER": 0.0609375,
+      "number_of_minimizers": 1,
+      "candidate_count": 3361
+    },
+    "DeepFilterNet": {
+      "threshold": 0.2755105514006069,
+      "FAR": 0.02326388888888889,
+      "FRR": 0.12708333333333333,
+      "BER": 0.07517361111111111,
+      "number_of_minimizers": 1,
+      "candidate_count": 3361
+    },
+    "Noisy": {
+      "threshold": 0.27007881166952363,
+      "FAR": 0.027083333333333334,
+      "FRR": 0.09375,
+      "BER": 0.06041666666666667,
+      "number_of_minimizers": 1,
+      "candidate_count": 3361
+    },
+    "Resample_only": {
+      "threshold": 0.26878531060051736,
+      "FAR": 0.028125,
+      "FRR": 0.09375,
+      "BER": 0.0609375,
+      "number_of_minimizers": 1,
+      "candidate_count": 3361
+    },
+    "SS_a0p5": {
+      "threshold": 0.27409546424038783,
+      "FAR": 0.030555555555555555,
+      "FRR": 0.11875,
+      "BER": 0.07465277777777778,
+      "number_of_minimizers": 2,
+      "candidate_count": 3361
+    },
+    "SS_a1p0": {
+      "threshold": 0.30696500670494886,
+      "FAR": 0.019097222222222224,
+      "FRR": 0.14583333333333334,
+      "BER": 0.08246527777777779,
+      "number_of_minimizers": 1,
+      "candidate_count": 3361
+    },
+    "SS_a1p5": {
+      "threshold": 0.2894265544680844,
+      "FAR": 0.03263888888888889,
+      "FRR": 0.13958333333333334,
+      "BER": 0.08611111111111111,
+      "number_of_minimizers": 1,
+      "candidate_count": 3361
+    },
+    "SS_a2p0": {
+      "threshold": 0.272485935281869,
+      "FAR": 0.04722222222222222,
+      "FRR": 0.13333333333333333,
+      "BER": 0.09027777777777778,
+      "number_of_minimizers": 1,
+      "candidate_count": 3361
+    },
+    "SS_a3p0": {
+      "threshold": 0.3255511560939618,
+      "FAR": 0.015277777777777777,
+      "FRR": 0.16666666666666666,
+      "BER": 0.09097222222222222,
+      "number_of_minimizers": 1,
+      "candidate_count": 3361
+    },
+    "Tracking_SS": {
+      "threshold": 0.26437629606843416,
+      "FAR": 0.0375,
+      "FRR": 0.09791666666666667,
+      "BER": 0.06770833333333333,
+      "number_of_minimizers": 1,
+      "candidate_count": 3361
+    },
+    "VAD_SS": {
+      "threshold": 0.30230020398795876,
+      "FAR": 0.022222222222222223,
+      "FRR": 0.16041666666666668,
+      "BER": 0.09131944444444445,
+      "number_of_minimizers": 1,
+      "candidate_count": 3361
+    }
+  },
+  "main_methods": [
+    "Noisy",
+    "SS_a1p5",
+    "SS_a3p0",
+    "SS_a0p5",
+    "DeepFilterNet"
+  ],
+  "selection_uses_target_quality_mixtures": 480,
+  "selection_genuine_trials": 480,
+  "selection_external_impostor_trials": 2880,
+  "test_results_used": false,
+  "source_config_sha256": "256e0424b9f02b7b33a69617025f6eeed64fa0cf82d6947aa01b757f545f19f1",
+  "source_metrics_sha256": "197d348a5dcf8544ed2f9bbacf615f9a8ef2f22735e4d69b4ea5ccf1cfb9eb23",
+  "source_embeddings_sha256": "b828e81ddde2924e7d72d4234b97debea4b4db4201c56a07639d20391948a907",
+  "metric_self_checks": {
+    "perfect_EER": 0,
+    "inverted_EER": 1,
+    "all_tied_EER": 0.5,
+    "weighted_vs_explicit_replication": true,
+    "threshold_exhaustive_check": true
+  }
+}

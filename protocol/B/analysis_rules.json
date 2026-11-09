@@ -1,0 +1,71 @@
+{
+  "status": "Prespecified before formal test; gate B development only",
+  "primary_comparisons": [
+    "default SS - Noisy",
+    "DeepFilterNet - Noisy",
+    "identity SS - default SS",
+    "identity SS - quality SS"
+  ],
+  "primary_endpoints": [
+    "external EER difference",
+    "external BER difference at common Noisy-development threshold"
+  ],
+  "confidence_interval": {
+    "repetitions": 20000,
+    "seed": 530804,
+    "level": 0.95,
+    "method": "paired sex-stratified speaker cluster percentile bootstrap; target/external separately",
+    "registration_primary": "fixed original 20 references",
+    "registration_secondary": "synchronous target-reference multiplicity weights",
+    "noise_sources": "fixed",
+    "multiplicity": "No familywise significance claims; intervals reported as estimation, no posthoc simultaneous superiority claims"
+  },
+  "quality_population": "target only; external separate",
+  "case_thresholds": {
+    "SI_SDR_gain_dB": 1.0,
+    "delta_cos_tolerance": 0.01,
+    "boundary": "Other",
+    "representative": "nearest standardized coordinate median; ClipID lexical tie"
+  },
+  "frequency_bands_Hz": [
+    [
+      0,
+      1000
+    ],
+    [
+      1000,
+      3000
+    ],
+    [
+      3000,
+      8000
+    ]
+  ],
+  "band_intervention": {
+    "foreground": "clean target test utterances only, no model tuning",
+    "levels_dB": [
+      3,
+      6,
+      12
+    ],
+    "filter": "real zero-phase FFT magnitude, reflect pad 1 s each side, 50 Hz cosine transitions centered at interior boundaries",
+    "energy_matched": "per utterance/level, match all bands to minimum common attainable energy loss, bisection of attenuation from 0 to level",
+    "controls": [
+      "unprocessed clean",
+      "whole-signal gain matched to each fixed-band energy",
+      "whole-signal gain matched to common-energy variant"
+    ],
+    "interpretation": "fixed ECAPA response to these artificial perturbations; no claim of uniquely identifying features used by model",
+    "export": "All perturbations and unprocessed/level controls for an utterance share one gain 0.5/max(1, max absolute sample across the entire predetermined perturbation set); no per-variant normalization. Same FLOAT/PCM24 import policy as baseline; assess on original scale."
+  },
+  "secondary": [
+    "VAD_SS",
+    "VOICEBOX-minimum-statistics Tracking_SS",
+    "Resample_only",
+    "Adapter",
+    "backup reference, primary thresholds fixed",
+    "source points and leave-one-source, class and SNR weights fixed"
+  ],
+  "optional_Wiener": "not in main locked comparison; if later implemented retain separate prespecified extension, frozen before its formal test; never replace main systems",
+  "test_processing_authorized_in_gate_B": false
+}

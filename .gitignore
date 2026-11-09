@@ -1,0 +1,23 @@
+# Private runtime configuration and heavy generated material
+runtime.local.json
+runs/
+data/
+tools/
+.venv*/
+__pycache__/
+*.py[cod]
+.DS_Store
+*.log
+*.wav
+*.flac
+*.mp3
+*.ckpt
+*.pt
+*.pth
+*.onnx
+*.tar.gz
+# Report regeneration by-products
+results/report/qa/
+results/report/figures/
+results/report/tables/
+# Retain tracked lightweight numerical results and examples; do not blanket-ignore MAT or NPZ.

@@ -1,0 +1,11 @@
+{
+  "repo_id": "speechbrain/spkrec-ecapa-voxceleb",
+  "revision": "0f99f2d0ebe89ac095bcc5903c4dd8f72b367286",
+  "files": [
+    "classifier.ckpt",
+    "embedding_model.ckpt",
+    "hyperparams.yaml",
+    "label_encoder.txt",
+    "mean_var_norm_emb.ckpt"
+  ]
+}

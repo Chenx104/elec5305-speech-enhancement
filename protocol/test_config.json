@@ -1,0 +1,40 @@
+{
+  "protocol": "elec5305-formal-test-v1",
+  "sample_rate": 16000,
+  "duration_seconds": 5,
+  "input_snr_db": [
+    -5,
+    0,
+    5,
+    10
+  ],
+  "candidate_alphas": [
+    0.5,
+    1,
+    1.5,
+    2,
+    3
+  ],
+  "cfg": {
+    "winLength": 512,
+    "hopSize": 128,
+    "nfft": 1024,
+    "noisePercentile": 20,
+    "alpha": 1.5,
+    "beta": 0.02,
+    "initNoiseSeconds": 0.25,
+    "vadSpeechRatio": 3.5,
+    "vadNoiseRatio": 1.5,
+    "floorRiseSeconds": 10,
+    "floorFallSeconds": 0.04,
+    "psdTimeConstant": 0.2,
+    "computeSTOI": true
+  },
+  "clean_peak": 0.7,
+  "export_headroom": 0.5,
+  "export_gain_rule": "0.5 / max(1, peak across clean, noisy and all predeclared traditional outputs); same gain for every method of a mixture; PCM24; no separate DFN gain",
+  "deepfilternet_extra_input_gain": 1.0,
+  "threads": 4,
+  "seed": 5305,
+  "threshold_tie_rule": "sorted minimizers at index floor(n/2)"
+}
