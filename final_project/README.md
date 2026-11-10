@@ -6,8 +6,6 @@ Chenxin Zhang · ELEC5305 Speech and Audio Processing · University of Sydney
 
 This project investigates why improvements in speech enhancement do not always translate into better speaker verification. It combines student-developed MATLAB spectral subtraction, pretrained DeepFilterNet3, and a fixed SpeechBrain ECAPA-TDNN verifier to examine how signal quality, subtraction strength and noise conditions relate to speaker identity.
 
-The main experiment has been executed, and its formal results have been checked against the final report. The added clean-query experiment has also been recomputed and independently checked. **[final_project.mlx](final_project.mlx) is the single main Run All entry point**, with saved outputs and English analysis throughout its 26 sections.
-
 ## Implementation and experiment
 
 The student-developed MATLAB code implements STFT analysis, weighted overlap-add reconstruction, percentile and simplified VAD noise estimation, power-domain spectral subtraction, and speech/noise component decomposition. Analysis uses 16 kHz audio, a 32 ms periodic Hann window, an 8 ms hop and a 1024-point FFT. The default subtraction strength is α=1.5 and the power floor is β=0.02.
