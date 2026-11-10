@@ -1,34 +1,57 @@
-# Obtain the fixed data and tools
+# Data and Model Setup
 
-No dataset or model downloads are executed by inspecting the repository. Paths below are relative to the package root. Full recomputation uses the original Apple-silicon macOS executable and POSIX shell/symlink handling; Windows and Linux are not drop-in supported platforms.
+This guide describes the environment and input resources used to reproduce the MATLAB speech enhancement and speaker verification experiment. Commands are run from the `final_project/` directory.
 
-## 1. Python
+## Software environment
 
-Use Python 3.12. The included lock file records the original experiment environment, not a new installation tested on every operating system.
+The recorded configuration uses:
+
+- **MATLAB R2025b**, with Signal Processing Toolbox and Audio Toolbox.
+- **Python 3.12**, with the dependencies in [`protocol/requirements.lock.txt`](../protocol/requirements.lock.txt).
+- **Apple-silicon macOS**, with the specified DeepFilterNet v0.5.6 executable and POSIX-compatible script interfaces.
+- **VOICEBOX**, **DeepFilterNet3** and **SpeechBrain ECAPA-TDNN**, at the revisions listed below.
+
+Create the Python environment:
 
 ```sh
 python3.12 -m venv .venv
 .venv/bin/python -m pip install -r protocol/requirements.lock.txt
+cp runtime.local.example.json runtime.local.json
 ```
 
-Create `runtime.local.json` by copying `runtime.local.example.json`, and set `python` to `.venv/bin/python`, `materials_root` to `data/materials`, and `tools_root` to `tools`. Keep that local file out of Git. Use the JSON settings consistently: Python input initialization reads that file directly, so do not rely on environment-variable overrides alone.
+Set the `python`, `materials_root` and `tools_root` fields in `runtime.local.json` to the corresponding paths. For the directory layout below, use `.venv/bin/python`, `data/materials` and `tools`. The runtime file is a local configuration and should not be committed.
 
-## 2. Speech and fixed noise sources
+## Speech datasets
 
-Download the original **test-clean.tar.gz** and **dev-clean.tar.gz** from [LibriSpeech / OpenSLR 12](https://www.openslr.org/12/), leaving the archives compressed:
+Download the **LibriSpeech `test-clean` and `dev-clean` archives** from [OpenSLR 12](https://www.openslr.org/12/). Place the compressed archives at:
 
 ```text
 data/materials/material_audit/test-clean.tar.gz
 data/materials/material_audit/dev-clean.tar.gz
 ```
 
-Create `data/materials/noise_audit` and copy:
+The protocol uses designated speakers and utterances for enrollment, development, testing, external impostors and babble generation. Speaker assignments and dataset manifests are recorded in `protocol/`.
 
-- `protocol/A/material_audit/candidate_speaker_roles.csv` to `data/materials/material_audit/candidate_speaker_roles.csv`;
-- the three `.py` scripts in `src/materials/` into `data/materials/noise_audit/`;
-- `protocol/zenodo_record.json` into `data/materials/noise_audit/zenodo_record.json`.
+## Environmental noise and babble
 
-Then run from the package root, in this order:
+DEMAND recordings are obtained from the [DEMAND dataset](https://zenodo.org/records/1227121). The project uses channel 1, with noise-source selections and variability groups specified in its protocol files. Babble sources are constructed from four-reader LibriSpeech groups.
+
+Prepare the expected material directory:
+
+```text
+data/materials/
+  material_audit/
+    test-clean.tar.gz
+    dev-clean.tar.gz
+    candidate_speaker_roles.csv
+  noise_audit/
+    fetch_channel01.py
+    compute_variability.py
+    build_babble_sources.py
+    zenodo_record.json
+```
+
+Copy `protocol/A/material_audit/candidate_speaker_roles.csv` into `material_audit/`, copy the three scripts from `src/materials/` into `noise_audit/`, and copy `protocol/zenodo_record.json` to `noise_audit/`. Then run:
 
 ```sh
 .venv/bin/python data/materials/noise_audit/fetch_channel01.py
@@ -36,16 +59,18 @@ Then run from the package root, in this order:
 .venv/bin/python data/materials/noise_audit/build_babble_sources.py
 ```
 
-These commands download DEMAND channel 1 and reconstruct the fixed five babble sources from the assigned readers. They require network access and disk space and were NOT executed during submission preparation. They retain the original seeds, reader groups, channel and resampling rules. Do not rerank/reassign the frozen manifests. WAV file headers may change, while decoded float32 samples must match the manifest's `DecodedFloat32SHA256`. The full experiment checks those sample hashes. The `Path` column in the packaged noise manifest is relative to `materials_root` and descriptive; runtime lookup uses SourceID and class.
-
-Expected noise paths:
+Expected processed noise locations:
 
 ```text
 data/materials/noise_audit/analysis16k/<SourceID>_ch01_16k.wav
 data/materials/noise_audit/babble/<SourceID>.wav
 ```
 
-## 3. Fixed tools and models
+The frozen manifests define the selected sources and allow decoded sample hashes to be checked. Use the recorded assignments for a comparable reproduction.
+
+## Enhancement and verification models
+
+Arrange the tools directory as follows:
 
 ```text
 tools/
@@ -63,13 +88,24 @@ tools/
       voicebox/
 ```
 
-- Download the exact executable from [DeepFilterNet v0.5.6](https://github.com/Rikorose/DeepFilterNet/releases/tag/v0.5.6), and make it executable (`chmod +x tools/deep-filter-0.5.6-aarch64-apple-darwin`).
-- Download [the pinned DeepFilterNet3 ONNX archive](https://github.com/Rikorose/DeepFilterNet/raw/978576aa8400552a4ce9730838c635aa30db5e61/models/DeepFilterNet3_onnx.tar.gz); retain the archive, do not substitute the current default model.
-- Download the five files listed in `protocol/ecapa_model_revision.json` from [the pinned ECAPA revision](https://huggingface.co/speechbrain/spkrec-ecapa-voxceleb/tree/0f99f2d0ebe89ac095bcc5903c4dd8f72b367286). Copy that JSON to `tools/ecapa_model/model_revision.json`. Inference is offline, on CPU with four threads.
-- Obtain [VOICEBOX at commit a8916a8e87294ebd052b91a1f50e196351b3e561](https://github.com/ImperialCollegeLondon/sap-voicebox/tree/a8916a8e87294ebd052b91a1f50e196351b3e561), preserving its license and notices. The code locates the `sap-voicebox-*` directory shown above.
+**DeepFilterNet3.** Obtain the [v0.5.6 Apple-silicon executable](https://github.com/Rikorose/DeepFilterNet/releases/tag/v0.5.6) and the [specified ONNX model archive](https://github.com/Rikorose/DeepFilterNet/raw/978576aa8400552a4ce9730838c635aa30db5e61/models/DeepFilterNet3_onnx.tar.gz). Make the executable runnable:
 
-The exact executable/model hashes remain in `protocol/reused_implementation_provenance.json`. Initialization checks the binary, DFN model archive and five ECAPA files. An equivalent model downloaded from a different revision is not a verified substitute. No training commands are needed.
+```sh
+chmod +x tools/deep-filter-0.5.6-aarch64-apple-darwin
+```
 
-## 4. Run
+**SpeechBrain ECAPA-TDNN.** Obtain the model files from [revision `0f99f2d0ebe89ac095bcc5903c4dd8f72b367286`](https://huggingface.co/speechbrain/spkrec-ecapa-voxceleb/tree/0f99f2d0ebe89ac095bcc5903c4dd8f72b367286). The required filenames are recorded in `protocol/ecapa_model_revision.json`; copy that record to `tools/ecapa_model/model_revision.json`.
 
-In MATLAB R2025b with Signal Processing Toolbox and Audio Toolbox, set Current Folder to this package, open `final_project.mlx`, and click Run All. Each run creates a new `runs/experiment_en_*` directory and recalculates development before testing. Sections 1–11 are the actual example; stop after Section 11 for an example-only demonstration. A complete Run All includes the full 624+1080 mixtures, external inference and 20,000 bootstrap resamples. No expensive run was performed in preparing this GitHub package.
+**VOICEBOX.** Obtain [the specified VOICEBOX revision](https://github.com/ImperialCollegeLondon/sap-voicebox/tree/a8916a8e87294ebd052b91a1f50e196351b3e561) and retain its directory structure and notices.
+
+Executable and model checksums are recorded in `protocol/reused_implementation_provenance.json`.
+
+## MATLAB execution
+
+1. Set MATLAB **Current Folder** to the `final_project/` directory.
+2. Open `final_project.mlx`.
+3. Review the saved outputs or select **Run All** for a complete recomputation.
+
+Sections 1–11 demonstrate the DSP workflow; the subsequent sections prepare and evaluate the development and test sets, analyse results and perform clean-speech verification. The full run includes 624 development mixtures, 1,080 noisy test mixtures, model inference and speaker-cluster bootstrap evaluation. Output files are stored in a newly created `runs/experiment_en_*` directory.
+
+For analysis without rerunning inference, use the saved Live Script outputs or browse the included [`results/`](../results/) directory. The [clean-speech analysis](CLEAN_QUERY_EXPERIMENT.md) also supports checking its recorded scores from MATLAB.
