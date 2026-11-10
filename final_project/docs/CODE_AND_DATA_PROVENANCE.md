@@ -1,17 +1,32 @@
-# Code and data provenance
+# Code and Data Provenance
 
-The final manual experiment entry point is `final_project.mlx`. It contains all 26 experimental sections and the student-developed MATLAB functions in its final appendix. These implement STFT analysis, weighted overlap-add reconstruction, percentile and simplified VAD noise estimation, spectral subtraction, conditional speech/noise decomposition, development selection, scoring and statistical analysis. Python adapters and deterministic material preparation remain in `src/scripts` and `src/materials`.
+## Project implementation
 
-VOICEBOX supplies minimum-statistics tracking and an implementation comparison. DeepFilterNet3 and SpeechBrain ECAPA are external pretrained models; neither is trained or fine-tuned here. They are not student-developed models. See `THIRD_PARTY_NOTICES.md` and `DATA_AND_MODELS.md` for sources and fixed dependencies.
+[`final_project.mlx`](../final_project.mlx) is the main experimental entry point. It contains the 26-section analysis and MATLAB local functions for short-time Fourier analysis and reconstruction, noise-spectrum estimation, power-domain spectral subtraction, speech/noise component decomposition, verification metrics and statistical evaluation.
 
-The final complete local run is `experiment_en_tp498abfc3_ace1_447e_96e9_2010c85be3ff`: 624 development mixtures and 1080 test mixtures. Its completion marker and final results are present. Every published development/test CSV with a matching result filename was verified byte-identical to that run during cleanup. No completed result was overwritten. The seven report figures and their curated plotting inputs are retained; their original analysis scripts remain unchanged.
+Supporting code is organised as follows:
 
-Some report plotting inputs duplicate canonical tables under `results/tables`. Those copies are intentional: the unchanged plotting scripts read their own `source_data` directory. The separate MATLAB helper copies and synthetic demonstration were archived after reference checks; the merged notebook uses local functions. A small `src/matlab/README.md` retains the directory expected by the unchanged Python initializer's historical MATLAB-directory symlink.
+| Location | Role |
+|---|---|
+| `src/scripts/` | Python preparation, model adapters, embedding extraction and evaluation |
+| `src/materials/` | Reproducible speech and noise material preparation |
+| `src/matlab/clean_query/` | MATLAB functions for clean-speech analysis |
+| `src/scripts/clean_query/` | Clean-speech data preparation and verification analysis |
+| `protocol/` | Experiment settings, dataset manifests, dependency versions and model identifiers |
+| `results/` | Numeric results, statistical comparisons, figures and analysis records |
 
-The portable noise manifest's descriptive Path column is relative to the materials root. All scientific IDs, samples, seeds, crop times and model/sample hashes are preserved. Original archive identifiers remain in `protocol/upstream_identifiers.json`. Historical package hash manifests were archived because their old filenames no longer describe this completed submission.
+The MATLAB spectral-subtraction and signal-analysis components are project implementations. The pretrained DeepFilterNet3 and SpeechBrain ECAPA-TDNN models provide external enhancement and speaker-representation methods; VOICEBOX contributes minimum-statistics tracking and an implementation comparison. Their original authors and software sources are listed in [Third-Party Notices](THIRD_PARTY_NOTICES.md).
 
-No source audio or model weights are included in the upload file set. The complete local `runs/` directory is retained in place to preserve its original absolute references, but is excluded by `.gitignore` and is not an upload artifact. Private runtime configuration is archived outside the submission directory; create it locally from the example before a new full execution. Report provenance and any required assistance disclosure remain separate student deliverables.
+## Data and evaluation design
 
-## Integrated clean-query check
+Speech comes from LibriSpeech `test-clean` and `dev-clean`. Noise includes selected DEMAND recordings and four-reader babble constructed from the designated LibriSpeech speakers. The formal experiment comprises **624 development mixtures** and **1,080 test mixtures**, evaluated at −5, 0, 5 and 10 dB. The 20 enrolled speakers share identities across development and test, with separate enrollment, development and test utterances. External speakers and noise sources follow the recorded development/test partition.
 
-Section 25 adds a clean-query reference and clean-input enhancement checks; Section 26 retains the main-result summary. The main Live Script contains the supplementary orchestration and MATLAB preparation, checks and display as local functions. Python entry points are in `src/scripts/clean_query`; standalone MATLAB reproduction helpers are in `src/matlab/clean_query`. Recorded scores and metrics are in `results/tables/clean_query`, and audit/provenance records are in `results/audits/clean_query`. Historical provenance JSON retains the hashes and paths of the inputs used when those results were produced. The merge receipt records the archived earlier files and the installed current paths.
+Development determines subtraction-strength selection and verification thresholds. Formal test scores are computed with those choices fixed. The principal test uses 720 genuine and 7,200 external-impostor comparisons per method. The clean-speech verification analysis uses 60 genuine and 600 external-impostor trials per condition; its procedure and results are documented in [Clean-Speech Verification Analysis](CLEAN_QUERY_EXPERIMENT.md).
+
+The fixed protocol, seeds, selected material identifiers and dependency versions are stored under `protocol/`. Numerical results and verification scores are available under `results/tables/`; report figures and analysis records are under `results/figures/` and `results/audits/`.
+
+## Reproducibility
+
+A full recomputation uses the data sources, versions and model revisions described in [Data and Models](DATA_AND_MODELS.md). The repository contains the code, experimental specifications and reported numerical outputs. Original corpus recordings, generated audio, model weights, local run directories and machine-specific runtime settings are not part of the repository.
+
+The published results can be inspected directly in the saved MATLAB Live Script, Markdown preview and result tables. New runs create their own experiment outputs and use the defined development selection and evaluation procedures.
