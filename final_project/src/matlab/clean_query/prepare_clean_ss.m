@@ -2,8 +2,8 @@ function prepare_clean_ss(root)
 % Exact original MATLAB DSP helpers, applied to unique pre-mixture clean crops.
 addpath(fullfile(root,'matlab'));
 c=jsondecode(fileread(fullfile(root,'test_config.json')));cfg=c.cfg;assert(cfg.alpha==1.5 && cfg.beta==.02);
-M=readtable(fullfile(root,'clean_manifest.csv'),'TextType','string','VariableNamingRule','preserve');
-C=readtable(fullfile(root,'dsp','base_clip_index.csv'),'TextType','string','VariableNamingRule','preserve');
+M=readtable(fullfile(root,'clean_manifest.csv'),'Delimiter',',','ReadVariableNames',true,'TextType','string','VariableNamingRule','preserve');
+C=readtable(fullfile(root,'dsp','base_clip_index.csv'),'Delimiter',',','ReadVariableNames',true,'TextType','string','VariableNamingRule','preserve');
 Q=M(M.RecordingRole=="test",:);assert(height(Q)==90);
 extra=C([],:);diag=struct([]);
 for i=1:height(Q)

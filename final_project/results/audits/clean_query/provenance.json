@@ -1,7 +1,7 @@
 {
   "source_project": "/Users/zhangchenxin/Documents/ELEC5305/final_project/final project",
-  "source_run": "/Users/zhangchenxin/Documents/ELEC5305/final_project/final project/runs/experiment_en_tp498abfc3_ace1_447e_96e9_2010c85be3ff",
-  "source_mlx_sha256": "b3f6b9d4ad666a72c60483b63656a3832a48beae511aceb793470080c25fb8a4",
+  "source_run": "/Users/zhangchenxin/Documents/ELEC5305/final_project/final project/runs/experiment_en_tp6ea0352b_adf2_46c9_b9a5_688ac5605dbc",
+  "source_mlx_sha256": "97067052b9a44b86177afa6dc2d218bd8a8acf43784ff1788fb9c615ff5157b2",
   "source_embeddings_sha256": "583d60e1cc683d19aef2f8dbddda19c6895c647f599cf4d5165e3f68cfcd86b6",
   "helpers_from_current_mlx": {
     "p_stft": "72a3451626f75d01bc049ba0858c4daf1763c7dba505e2d11388c0d78c6a2c27",

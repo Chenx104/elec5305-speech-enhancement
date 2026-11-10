@@ -1,12 +1,12 @@
-
 # When Better Denoising Does Not Mean Better Speaker Verification
-## *An Empirical Study of Speech Enhancement and Speaker Identity Preservation*
+
+## An Empirical Study of Speech Enhancement and Speaker Identity Preservation
 
 Chenxin Zhang
 
 # 1. Research question, data split and settings
 
-This experiment examines whether gains in SI\-SDR and STOI after denoising accompany lower speaker\-verification error rates, how subtraction strength affects this relationship, and how results vary across noise categories and sources. 
+This experiment examines whether gains in SI-SDR and STOI after denoising accompany lower speaker-verification error rates, how subtraction strength affects this relationship, and how results vary across noise categories and sources.
 
 ```matlab
 clearvars; format shortG;
@@ -46,12 +46,12 @@ dataSplit=table(labels,speakerCount,recordingCount,mixtureCount, ...
                  Purpose                  Speakers    Source_recordings    Planned_mixtures
     __________________________________    ________    _________________    ________________
 
-    "Primary enrollment reference"           20              20                    0       
-    "Alternative enrollment reference"       20              20                    0       
-    "Development: enrolled speakers"         20              40                  480       
-    "Development: unenrolled speakers"        6              12                  144       
-    "Test: enrolled speakers"                20              60                  720       
-    "Test: unenrolled speakers"              10              30                  360       
+    "Primary enrollment reference"           20              20                    0
+    "Alternative enrollment reference"       20              20                    0
+    "Development: enrolled speakers"         20              40                  480
+    "Development: unenrolled speakers"        6              12                  144
+    "Test: enrolled speakers"                20              60                  720
+    "Test: unenrolled speakers"              10              30                  360
 ```
 
 ```matlab
@@ -73,12 +73,11 @@ settings=table(["Sample rate";"Window length";"Hop size";"FFT length";"Noise-sel
     "Power floor beta"               0.02
 ```
 
-
-Tables 1 and 2: Speech\-data split and processing settings. Sample rate is in Hz; window and hop lengths are in samples. Enrollment recordings provide identity references. Unenrolled speakers are used to test whether the system incorrectly accepts an outside speaker.
+Tables 1 and 2: Speech-data split and processing settings. Sample rate is in Hz; window and hop lengths are in samples. Enrollment recordings provide identity references. Unenrolled speakers are used to test whether the system incorrectly accepts an outside speaker.
 
 # 2. Select and read clean speech
 
-Read a five\-second clean utterance and add noise to form a 5 dB example for demonstrating STFT analysis, spectral subtraction and reconstruction.
+Read a five-second clean utterance and add noise to form a 5 dB example for demonstrating STFT analysis, spectral subtraction and reconstruction.
 
 ```matlab
 assert(exist('ctx','var')==1,'Run Section 1 first.');
@@ -91,7 +90,7 @@ disp(sample(:,{'ConditionID','UtteranceID','NoiseClass','NoiseSourceID','InputSN
          ConditionID            UtteranceID      NoiseClass     NoiseSourceID     InputSNR_dB
     ______________________    _______________    __________    _______________    ___________
 
-    "test_base_0157_snr_5"    "61-70968-0015"     "Babble"     "BABBLE_test_1"         5     
+    "test_base_0157_snr_5"    "61-70968-0015"     "Babble"     "BABBLE_test_1"         5
 ```
 
 ```matlab
@@ -110,7 +109,7 @@ time=(0:N-1)'/fs;
 figure('Color','w');plot(time,clean);xlabel('Time / s');ylabel('Amplitude');title('Clean speech');grid on;
 ```
 
-![figure_0.png](final_project_preview_media/figure_0.png)
+![MATLAB figure 1](final_project_preview_media/figure_0.png)
 
 ```matlab
 speechInfo=table(speechRate,N,N/fs,max(abs(clean)), ...
@@ -121,15 +120,14 @@ speechInfo=table(speechRate,N,N/fs,max(abs(clean)), ...
     Sample_rate_Hz    Samples    Duration_s    Peak_amplitude
     ______________    _______    __________    ______________
 
-        16000          80000         5              0.7      
+        16000          80000         5              0.7
 ```
-
 
 Figure 1 and Tables 3 and 4: The example utterance, duration, sample rate and peak amplitude. The same clean utterance is the reference throughout the example.
 
 # 3. Read a noise segment
 
-Read a five\-second noise segment and remove its mean. Babble contains four background speakers. LowVariation and HighVariation are the groups with relatively smaller and larger energy fluctuations among the noise materials used here.
+Read a five-second noise segment and remove its mean. Babble contains four background speakers. LowVariation and HighVariation are the groups with relatively smaller and larger energy fluctuations among the noise materials used here.
 
 ```matlab
 assert(exist('clean','var')==1,'Run Section 2 first.');
@@ -143,7 +141,7 @@ assert(numel(noise)==numel(clean) && sum(noise.^2)>0);
 figure('Color','w');plot(time,noise);xlabel('Time / s');ylabel('Amplitude');title('Unscaled noise segment');grid on;
 ```
 
-![figure_1.png](final_project_preview_media/figure_1.png)
+![MATLAB figure 2](final_project_preview_media/figure_1.png)
 
 ```matlab
 noiseInfo=table(sample.NoiseClass,sample.NoiseSourceID,sample.NoiseStartSample,N/fs, ...
@@ -154,15 +152,14 @@ noiseInfo=table(sample.NoiseClass,sample.NoiseSourceID,sample.NoiseStartSample,N
     Noise_category     Noise_source      Start_sample_zero_based    Duration_s
     ______________    _______________    _______________________    __________
 
-       "Babble"       "BABBLE_test_1"          3.2524e+06               5     
+       "Babble"       "BABBLE_test_1"          3.2524e+06               5
 ```
 
-
-Figure 2 and Table 5: The example noise segment and its position in the source recording. The manifest uses zero\-based sample offsets; the code converts these to MATLAB's one\-based indexing.
+Figure 2 and Table 5: The example noise segment and its position in the source recording. The manifest uses zero-based sample offsets; the code converts these to MATLAB's one-based indexing.
 
 # 4. Generate a mixture at the specified SNR
 
-SNR is the energy ratio over the complete five\-second clean utterance and added noise: SNR = 10 log10(Σx²/Σd²). Scale the selected noise segment v by k, then form d = kv and y = x + d.
+SNR is the energy ratio over the complete five-second clean utterance and added noise: SNR = 10 log10(Σx²/Σd²). Scale the selected noise segment v by k, then form d = kv and y = x + d.
 
 ```matlab
 assert(exist('noise','var')==1,'Run Section 3 first.');
@@ -176,7 +173,7 @@ snrInfo=table(targetSNR,noiseScale,measuredSNR,measuredSNR-targetSNR, ...
 ```
 
 ```matlabTextOutput
-    Target_SNR_dB    Noise_scale    Measured_SNR_dB     Error_dB  
+    Target_SNR_dB    Noise_scale    Measured_SNR_dB     Error_dB
     _____________    ___________    _______________    ___________
 
           5            0.41618             5           -9.7073e-10
@@ -189,7 +186,7 @@ nexttile;plot(time,noiseComponent);ylabel('Amplitude');title('Scaled noise');gri
 nexttile;plot(time,noisy);xlabel('Time / s');ylabel('Amplitude');title('Noisy speech');grid on;
 ```
 
-![figure_2.png](final_project_preview_media/figure_2.png)
+![MATLAB figure 3](final_project_preview_media/figure_2.png)
 
 Table 6 and Figure 3: Clean speech, added noise and noisy speech. The measured SNR is close to the specified 5 dB.
 
@@ -210,7 +207,7 @@ snrCheck=table(snrLevels,scales,actualSNR,actualSNR-snrLevels, ...
 ```
 
 ```matlabTextOutput
-    Target_SNR_dB    Noise_scale    Measured_SNR_dB     Error_dB  
+    Target_SNR_dB    Noise_scale    Measured_SNR_dB     Error_dB
     _____________    ___________    _______________    ___________
 
          -5             1.3161                -5       -1.1855e-09
@@ -228,7 +225,7 @@ disp(table(maximumSNRError,'VariableNames',{'Maximum_SNR_error_dB'}));
     Maximum_SNR_error_dB
     ____________________
 
-         3.6451e-09     
+         3.6451e-09
 ```
 
 ```matlab
@@ -239,7 +236,7 @@ Tables 7 and 8: Noise scaling factors, measured SNRs and deviations for the same
 
 # 6. Frame, window and compute the STFT
 
-Compute the STFT using a 32 ms periodic Hann window, an 8 ms hop and a 1024\-point FFT. Zero\-pad both ends to reconstruct the signal boundaries. Exclude frames containing this padding when estimating noise. The batch helper p\_stft() uses the same framing, windowing and Fourier transform shown explicitly here.
+Compute the STFT using a 32 ms periodic Hann window, an 8 ms hop and a 1024-point FFT. Zero-pad both ends to reconstruct the signal boundaries. Exclude frames containing this padding when estimating noise. The batch helper p_stft() uses the same framing, windowing and Fourier transform shown explicitly here.
 
 ```matlab
 assert(exist('noisy','var')==1,'Run Section 4 first.');
@@ -271,7 +268,7 @@ nexttile;imagesc(frameTime(meta.fullFrames),frequency/1000, ...
 axis xy;clim([-80 0]);colorbar;xlabel('Time / s');ylabel('Frequency / kHz');title('Noisy STFT / dB');
 ```
 
-![figure_3.png](final_project_preview_media/figure_3.png)
+![MATLAB figure 4](final_project_preview_media/figure_3.png)
 
 ```matlab
 frameInfo=table(size(Y,1),size(Y,2),sum(meta.fullFrames), ...
@@ -282,15 +279,14 @@ frameInfo=table(size(Y,1),size(Y,2),sum(meta.fullFrames), ...
     One_sided_bins    Total_frames    Complete_frames
     ______________    ____________    _______________
 
-         513              630               622      
+         513              630               622
 ```
 
-
-Figure 4 and Table 9: Each windowed frame produces 513 one\-sided frequency bins. The spectrogram shows frames fully contained in the original signal, with power relative to the maximum noisy STFT power. Padded boundary frames are retained for inverse transformation.
+Figure 4 and Table 9: Each windowed frame produces 513 one-sided frequency bins. The spectrogram shows frames fully contained in the original signal, with power relative to the maximum noisy STFT power. Padded boundary frames are retained for inverse transformation.
 
 # 7. Inverse transformation and reconstruction error
 
-Reconstruct the noisy signal from its unmodified STFT and measure the error. Apply the IFFT to each frame, window and overlap\-add the results, normalize by the overlapping window weights, and remove the padding. p\_istft() implements this same weighted overlap\-add reconstruction for subsequent processing steps.
+Reconstruct the noisy signal from its unmodified STFT and measure the error. Apply the IFFT to each frame, window and overlap-add the results, normalize by the overlapping window weights, and remove the padding. p_istft() implements this same weighted overlap-add reconstruction for subsequent processing steps.
 
 ```matlab
 assert(exist('Y','var')==1,'Run Section 6 first.');
@@ -314,7 +310,7 @@ reconstructionCheck=table(relativeReconstructionError,max(abs(reconstructionErro
     Relative_reconstruction_error    Maximum_absolute_error
     _____________________________    ______________________
 
-1.7666e-16                    2.2204e-16
+             1.7666e-16                    2.2204e-16
 ```
 
 ```matlab
@@ -325,13 +321,13 @@ xlabel('Time / s');ylabel('Amplitude');legend('Original noisy speech','Reconstru
 nexttile;plot(time,reconstructionError);xlabel('Time / s');ylabel('Error');title('Reconstructed minus original signal');grid on;
 ```
 
-![figure_4.png](final_project_preview_media/figure_4.png)
+![MATLAB figure 5](final_project_preview_media/figure_4.png)
 
 Figure 5 and Table 10: The reconstructed and original noisy waveforms overlap. The relative reconstruction error is approximately 1.8 × 10⁻¹⁶, showing that the STFT and inverse transformation accurately reconstruct the input.
 
 # 8. Estimate noise power and examine estimation error
 
-Rank complete frames by spectral RMS, then average the power spectra of approximately the lowest 20% to estimate noise power. p\_noise\_psd() estimates noise power from the observed STFT; clean speech and added noise are used only for the separate diagnostics. p\_stft() also supplies their reference spectra.
+Rank complete frames by spectral RMS, then average the power spectra of approximately the lowest 20% to estimate noise power. p_noise_psd() estimates noise power from the observed STFT; clean speech and added noise are used only for the separate diagnostics. p_stft() also supplies their reference spectra.
 
 ```matlab
 assert(exist('relativeReconstructionError','var')==1,'Run Section 7 first.');
@@ -351,9 +347,9 @@ nexttile;plot(frequency/1000,10*log10(max(estimatedNoisePSD,realmin)));
 xlabel('Frequency / kHz');ylabel('Power / dB');title('Estimated noise power spectrum');grid on;
 ```
 
-![figure_5.png](final_project_preview_media/figure_5.png)
+![MATLAB figure 6](final_project_preview_media/figure_5.png)
 
-Figure 6: Low\-power frames selected from the noisy utterance for noise estimation. Next, use the known noise to examine estimation accuracy and the clean reference to check whether the selected frames still contain speech.
+Figure 6: Low-power frames selected from the noisy utterance for noise estimation. Next, use the known noise to examine estimation accuracy and the clean reference to check whether the selected frames still contain speech.
 
 ```matlab
 X=p_stft(clean,cfg);D=p_stft(noiseComponent,cfg);
@@ -370,7 +366,7 @@ mainDiagnostic=table(sum(selected),100*mean(selected(meta.fullFrames)),mainNoise
     Selected_frames    Selected_complete_frames_pct    Noise_PSD_power_bias_dB    Selected_active_frames_pct
     _______________    ____________________________    _______________________    __________________________
 
-          124                     19.936                       -4.3121                      64.516          
+          124                     19.936                       -4.3121                      64.516
 ```
 
 ```matlab
@@ -380,7 +376,7 @@ plot(frequency/1000,10*log10(max(estimatedNoisePSD/reference,1e-12)));
 xlabel('Frequency / kHz');ylabel('Relative power / dB');legend('True noise','Estimated noise');title('Noise-power estimation diagnostic');grid on;
 ```
 
-![figure_6.png](final_project_preview_media/figure_6.png)
+![MATLAB figure 7](final_project_preview_media/figure_6.png)
 
 ```matlab
 % Use the same clean utterance in three noise categories; select the first listed 5 dB condition in each.
@@ -408,17 +404,16 @@ noiseDiagnostics=table(classes,sourceIDs,conditionIDs,selectedCount,bias,activit
     Noise_category         Source           Example_condition       Selected_frames    Noise_PSD_power_bias_dB    Selected_active_frames_pct
     _______________    _______________    ______________________    _______________    _______________________    __________________________
 
-    "LowVariation"     "NRIVER"           "test_base_0159_snr_5"          124                   -7.574                      54.032          
-    "HighVariation"    "TMETRO"           "test_base_0158_snr_5"          124                  -6.5494                      57.258          
-    "Babble"           "BABBLE_test_1"    "test_base_0157_snr_5"          124                  -4.3121                      64.516          
+    "LowVariation"     "NRIVER"           "test_base_0159_snr_5"          124                   -7.574                      54.032
+    "HighVariation"    "TMETRO"           "test_base_0158_snr_5"          124                  -6.5494                      57.258
+    "Babble"           "BABBLE_test_1"    "test_base_0157_snr_5"          124                  -4.3121                      64.516
 ```
 
-
-Figure 7 and Tables 11 and 12: Power bias is the estimated\-to\-true noise\-power ratio in decibels; negative values indicate underestimation. A clean\-speech frame is marked active when its energy is within 30 dB of the strongest complete frame. This checks whether selected frames still contain speech. One example per noise category does not establish an overall difference between categories.
+Figure 7 and Tables 11 and 12: Power bias is the estimated-to-true noise-power ratio in decibels; negative values indicate underestimation. A clean-speech frame is marked active when its energy is within 30 dB of the strongest complete frame. This checks whether selected frames still contain speech. One example per noise category does not establish an overall difference between categories.
 
 # 9. Calculate the time–frequency gain
 
-Subtract α times the estimated noise power from the noisy power spectrum, with a floor of β times the original noisy power. Divide the resulting power by the original power and take the square root to obtain amplitude gain G. Multiply the original STFT by G, retaining the input phase. The batch helper p\_spectral\_gain() applies this same power\-subtraction rule to calculate the amplitude gain.
+Subtract α times the estimated noise power from the noisy power spectrum, with a floor of β times the original noisy power. Divide the resulting power by the original power and take the square root to obtain amplitude gain G. Multiply the original STFT by G, retaining the input phase. The batch helper p_spectral_gain() applies this same power-subtraction rule to calculate the amplitude gain.
 
 ```matlab
 assert(exist('Pnoise','var')==1,'Run Section 8 first.');
@@ -430,7 +425,7 @@ figure('Color','w');imagesc(frameTime(meta.fullFrames),frequency/1000,G(:,meta.f
 axis xy;clim([0 1]);colorbar;xlabel('Time / s');ylabel('Frequency / kHz');title('Spectral-subtraction amplitude gain G');
 ```
 
-![figure_7.png](final_project_preview_media/figure_7.png)
+![MATLAB figure 8](final_project_preview_media/figure_7.png)
 
 ```matlab
 gainInfo=table(cfg.alpha,cfg.beta,min(G(:)),median(G(:)),max(G(:)), ...
@@ -441,9 +436,8 @@ gainInfo=table(cfg.alpha,cfg.beta,min(G(:)),median(G(:)),max(G(:)), ...
     alpha    beta    Minimum_gain    Median_gain    Maximum_gain
     _____    ____    ____________    ___________    ____________
 
-1.5     0.02      0.14142         0.14142        0.99986
+     1.5     0.02      0.14142         0.14142        0.99986
 ```
-
 
 Figure 8 and Table 13: Gains closer to 1 produce less attenuation; gains closer to the lower bound √β produce more attenuation. Speech and noise at the same time–frequency location receive the same gain, so noise suppression can also attenuate speech.
 
@@ -462,7 +456,7 @@ legend('Noisy speech','Spectral-subtraction output');title('Noisy and enhanced w
 nexttile;plot(time,enhanced-noisy);xlabel('Time / s');ylabel('Amplitude difference');title('Enhanced minus noisy waveform');grid on;
 ```
 
-![figure_8.png](final_project_preview_media/figure_8.png)
+![MATLAB figure 9](final_project_preview_media/figure_8.png)
 
 ```matlab
 figure('Color','w','Position',[100 100 1100 430]);tiledlayout(1,3,'TileSpacing','compact');
@@ -475,13 +469,13 @@ end
 sharedColorbar=colorbar;sharedColorbar.Layout.Tile='east';
 ```
 
-![figure_9.png](final_project_preview_media/figure_9.png)
+![MATLAB figure 10](final_project_preview_media/figure_9.png)
 
-Figure 9: Noisy and enhanced waveforms and their difference. Figure 10: Clean, noisy and enhanced spectrograms. The three spectrograms share the same color reference and range. Next, calculate SI\-SDR, STOI and retained speech energy.
+Figure 9: Noisy and enhanced waveforms and their difference. Figure 10: Clean, noisy and enhanced spectrograms. The three spectrograms share the same color reference and range. Next, calculate SI-SDR, STOI and retained speech energy.
 
-# 11. Calculate SI\-SDR, STOI and retained speech energy
+# 11. Calculate SI-SDR, STOI and retained speech energy
 
-SI\-SDR measures waveform agreement with clean speech while allowing an overall amplitude scaling of the clean reference. STOI estimates speech intelligibility. Higher values are better for both; speaker verification is evaluated separately below. p\_metrics() collects the corresponding waveform\-quality and decomposition measures in the batch workflow.
+SI-SDR measures waveform agreement with clean speech while allowing an overall amplitude scaling of the clean reference. STOI estimates speech intelligibility. Higher values are better for both; speaker verification is evaluated separately below. p_metrics() collects the corresponding waveform-quality and decomposition measures in the batch workflow.
 
 ```matlab
 assert(exist('enhanced','var')==1,'Run Section 10 first.');
@@ -510,8 +504,8 @@ metrics=table(methods,siSDR,siSDR-siSDR(1),stoiValues,stoiValues-stoiValues(1), 
                  Method                  SI_SDR_dB    SI_SDR_gain_dB     STOI      STOI change    Noise_reduction_dB    Retained_speech_energy_pct
     _________________________________    _________    ______________    _______    ___________    __________________    __________________________
 
-    "Noisy"                                4.991               0        0.79941             0                0                       100          
-    "Percentile spectral subtraction"     5.2343         0.24332        0.78643     -0.012981          0.94432                    92.093          
+    "Noisy"                                4.991               0        0.79941             0                0                       100
+    "Percentile spectral subtraction"     5.2343         0.24332        0.78643     -0.012981          0.94432                    92.093
 ```
 
 ```matlab
@@ -522,7 +516,7 @@ disp(table(decompositionError,'VariableNames',{'Relative_decomposition_error'}))
     Relative_decomposition_error
     ____________________________
 
-1.9207e-16
+             1.9207e-16
 ```
 
 ```matlab
@@ -532,11 +526,11 @@ save(fullfile(ctx.runRoot,'phase1_workspace.mat'),'ctx','sample','clean','noise'
  'selected','estimatedNoisePSD','Pnoise','-v7');
 ```
 
-Tables 14 and 15: SI\-SDR gain and STOI change are relative to the same noisy utterance. Spectral subtraction increases SI\-SDR by approximately 0.24 dB but reduces STOI by approximately 0.013. Noise reduction is approximately 0.94 dB, with 92.1% of speech energy retained. The complete test set is used later to compare verification performance.
+Tables 14 and 15: SI-SDR gain and STOI change are relative to the same noisy utterance. Spectral subtraction increases SI-SDR by approximately 0.24 dB but reduces STOI by approximately 0.013. Noise reduction is approximately 0.94 dB, with 92.1% of speech energy retained. The complete test set is used later to compare verification performance.
 
 # 12. Generate development mixtures
 
-A Python helper generates 624 development mixtures using the same energy\-ratio formula as Sections 4–5; the MATLAB example demonstrates one pair. Development metrics are then used to select subtraction parameters and decision thresholds. p\_initialize\_dataset() prepares the development directory and fixed input lists. p\_run\_python() calls the Python preparation script and writes its process output to a log.
+A Python helper generates 624 development mixtures using the same energy-ratio formula as Sections 4–5; the MATLAB example demonstrates one pair. Development metrics are then used to select subtraction parameters and decision thresholds. p_initialize_dataset() prepares the development directory and fixed input lists. p_run_python() calls the Python preparation script and writes its process output to a log.
 
 ```matlab
 assert(exist('ctx','var')==1,'Run Section 1 first.');
@@ -551,30 +545,30 @@ disp(groupsummary(devInputs,{'ParticipantRole','NoiseClass','InputSNR_dB'}));
        ParticipantRole          NoiseClass       InputSNR_dB    GroupCount
     ______________________    _______________    ___________    __________
 
-    "external_development"    "Babble"               -5             12    
-    "external_development"    "Babble"                0             12    
-    "external_development"    "Babble"                5             12    
-    "external_development"    "Babble"               10             12    
-    "external_development"    "HighVariation"        -5             12    
-    "external_development"    "HighVariation"         0             12    
-    "external_development"    "HighVariation"         5             12    
-    "external_development"    "HighVariation"        10             12    
-    "external_development"    "LowVariation"         -5             12    
-    "external_development"    "LowVariation"          0             12    
-    "external_development"    "LowVariation"          5             12    
-    "external_development"    "LowVariation"         10             12    
-    "target"                  "Babble"               -5             40    
-    "target"                  "Babble"                0             40    
-    "target"                  "Babble"                5             40    
-    "target"                  "Babble"               10             40    
-    "target"                  "HighVariation"        -5             40    
-    "target"                  "HighVariation"         0             40    
-    "target"                  "HighVariation"         5             40    
-    "target"                  "HighVariation"        10             40    
-    "target"                  "LowVariation"         -5             40    
-    "target"                  "LowVariation"          0             40    
-    "target"                  "LowVariation"          5             40    
-    "target"                  "LowVariation"         10             40    
+    "external_development"    "Babble"               -5             12
+    "external_development"    "Babble"                0             12
+    "external_development"    "Babble"                5             12
+    "external_development"    "Babble"               10             12
+    "external_development"    "HighVariation"        -5             12
+    "external_development"    "HighVariation"         0             12
+    "external_development"    "HighVariation"         5             12
+    "external_development"    "HighVariation"        10             12
+    "external_development"    "LowVariation"         -5             12
+    "external_development"    "LowVariation"          0             12
+    "external_development"    "LowVariation"          5             12
+    "external_development"    "LowVariation"         10             12
+    "target"                  "Babble"               -5             40
+    "target"                  "Babble"                0             40
+    "target"                  "Babble"                5             40
+    "target"                  "Babble"               10             40
+    "target"                  "HighVariation"        -5             40
+    "target"                  "HighVariation"         0             40
+    "target"                  "HighVariation"         5             40
+    "target"                  "HighVariation"        10             40
+    "target"                  "LowVariation"         -5             40
+    "target"                  "LowVariation"          0             40
+    "target"                  "LowVariation"          5             40
+    "target"                  "LowVariation"         10             40
 ```
 
 ```matlab
@@ -586,15 +580,14 @@ disp(table(developmentSNR,'VariableNames',{'Maximum_SNR_error_dB'}));
     Maximum_SNR_error_dB
     ____________________
 
-         7.5911e-08     
+         7.5911e-08
 ```
 
-
-Tables 16 and 17: Development\-mixture counts by condition and the maximum deviation of measured SNR from its specified value.
+Tables 16 and 17: Development-mixture counts by condition and the maximum deviation of measured SNR from its specified value.
 
 # 13. Development: traditional methods
 
-Run percentile spectral subtraction at five α values. SS\_a1p5 denotes α = 1.5; other α labels follow the same convention. VAD\_SS initializes noise power from the first 32 complete frames, determined by the nominal 0.25 s initialization setting and 8 ms hop. It then updates noise power on frames selected using two frame\-level thresholds and a tracked noise floor. Tracking\_SS uses the VOICEBOX minimum\-statistics estimator to track noise power over time. All three use the same subtraction\-gain formula. p\_run\_matlab\_stage() invokes the MATLAB batch processing; run\_test\_dsp() applies the traditional methods and records their signal metrics.
+Run percentile spectral subtraction at five α values. SS_a1p5 denotes α = 1.5; other α labels follow the same convention. VAD_SS initializes noise power from the first 32 complete frames, determined by the nominal 0.25 s initialization setting and 8 ms hop. It then updates noise power on frames selected using two frame-level thresholds and a tracked noise floor. Tracking_SS uses the VOICEBOX minimum-statistics estimator to track noise power over time. All three use the same subtraction-gain formula. p_run_matlab_stage() invokes the MATLAB batch processing; run_test_dsp() applies the traditional methods and records their signal metrics.
 
 ```matlab
 assert(exist('devRoot','var')==1,'Run Sections 1–12 in order first.');
@@ -607,25 +600,23 @@ disp(groupsummary(devQuality(devQuality.ParticipantRole=="target",:),'Method','m
        Method        GroupCount    mean_SI_SDRImprovement_dB    mean_STOIChange
     _____________    __________    _________________________    _______________
 
-    "Noisy"             480                1.674e-16              2.8912e-18   
-    "SS_a0p5"           480                   0.4984              0.00018977   
-    "SS_a1p0"           480                  0.92612              -0.0011465   
-    "SS_a1p5"           480                   1.2894              -0.0029527   
-    "SS_a2p0"           480                   1.5948              -0.0049906   
-    "SS_a3p0"           480                    2.068              -0.0093487   
-    "Tracking_SS"       480                   1.8695               0.0027727   
-    "VAD_SS"            480                   1.2134               -0.022317   
+    "Noisy"             480                1.674e-16              2.8912e-18
+    "SS_a0p5"           480                   0.4984              0.00018977
+    "SS_a1p0"           480                  0.92612              -0.0011465
+    "SS_a1p5"           480                   1.2894              -0.0029527
+    "SS_a2p0"           480                   1.5948              -0.0049906
+    "SS_a3p0"           480                    2.068              -0.0093487
+    "Tracking_SS"       480                   1.8695               0.0027727
+    "VAD_SS"            480                   1.2134               -0.022317
 ```
 
-
-Table 18: Mean SI\-SDR gain and STOI change for development mixtures from enrolled speakers.
+Table 18: Mean SI-SDR gain and STOI change for development mixtures from enrolled speakers.
 
 # 14. Development: models, scoring and parameter selection
 
-Use pretrained DeepFilterNet3 for enhancement and ECAPA to extract 192\-dimensional speaker embeddings. Neither model is trained or fine\-tuned. Set the additional DeepFilterNet input gain to 1 and compensate its output delay. p\_deepfilter\_settings() reads the settings recorded by this run. After embeddings are extracted, p\_experiment\_scores() forms cosine scores; p\_choose\_alpha() and p\_choose\_threshold() implement the development selection rules.
+Use pretrained DeepFilterNet3 for enhancement and ECAPA to extract 192-dimensional speaker embeddings. Neither model is trained or fine-tuned. Set the additional DeepFilterNet input gain to 1 and compensate its output delay. p_deepfilter_settings() reads the settings recorded by this run. After embeddings are extracted, p_experiment_scores() forms cosine scores; p_choose_alpha() and p_choose_threshold() implement the development selection rules.
 
-
-EER is the error rate at the intersection of false\-acceptance and false\-rejection rates. BER is their average at a specified decision threshold. Development parameter selection uses genuine and external\-impostor trials.
+EER is the error rate at the intersection of false-acceptance and false-rejection rates. BER is their average at a specified decision threshold. Development parameter selection uses genuine and external-impostor trials.
 
 ```matlab
 assert(exist('devRoot','var')==1 && exist('devQuality','var')==1,'Run Sections 1–13 in order first.');
@@ -637,7 +628,7 @@ disp(p_deepfilter_settings(devRoot));
     Model_sample_rate_Hz    Aligned_output_rate_Hz    Delay_compensation_48k_samples    Additional_input_gain
     ____________________    ______________________    ______________________________    _____________________
 
-           48000                    16000                          1440                           1          
+           48000                    16000                          1440                           1
 ```
 
 ```matlab
@@ -650,19 +641,18 @@ disp(groupsummary(devQuality(devQuality.ParticipantRole=="target",:),'Method','m
         Method         GroupCount    mean_SI_SDRImprovement_dB    mean_STOIChange
     _______________    __________    _________________________    _______________
 
-    "Adapter"             480                -0.003031              1.2568e-06   
-    "DeepFilterNet"       480                   8.2105                0.023757   
-    "Noisy"               480                1.674e-16              2.8912e-18   
-    "Resample_only"       480               -0.0030306              1.2955e-06   
-    "SS_a0p5"             480                   0.4984              0.00018977   
-    "SS_a1p0"             480                  0.92612              -0.0011465   
-    "SS_a1p5"             480                   1.2894              -0.0029527   
-    "SS_a2p0"             480                   1.5948              -0.0049906   
-    "SS_a3p0"             480                    2.068              -0.0093487   
-    "Tracking_SS"         480                   1.8695               0.0027727   
-    "VAD_SS"              480                   1.2134               -0.022317   
+    "Adapter"             480                -0.003031              1.2568e-06
+    "DeepFilterNet"       480                   8.2105                0.023757
+    "Noisy"               480                1.674e-16              2.8912e-18
+    "Resample_only"       480               -0.0030306              1.2955e-06
+    "SS_a0p5"             480                   0.4984              0.00018977
+    "SS_a1p0"             480                  0.92612              -0.0011465
+    "SS_a1p5"             480                   1.2894              -0.0029527
+    "SS_a2p0"             480                   1.5948              -0.0049906
+    "SS_a3p0"             480                    2.068              -0.0093487
+    "Tracking_SS"         480                   1.8695               0.0027727
+    "VAD_SS"              480                   1.2134               -0.022317
 ```
-
 
 Tables 19 and 20: Model settings from this run and development signal metrics.
 
@@ -678,11 +668,10 @@ disp(table(height(dev.Q),numel(dev.methods),nnz(dev.genuine),nnz(dev.external),'
     Mixtures    Methods    Genuine_trials    External_impostor_trials
     ________    _______    ______________    ________________________
 
-      624         11            480                    2880          
+      624         11            480                    2880
 ```
 
-
-Table 21: Development scoring dimensions. Genuine and external\-impostor scores are used for the following calibration step.
+Table 21: Development scoring dimensions. Genuine and external-impostor scores are used for the following calibration step.
 
 ```matlab
 assert(exist('dev','var')==1,'Run the preceding development embedding step first.');
@@ -704,17 +693,17 @@ devCalibration=table(dev.methods,methodThresholds,methodBER, ...
         Method         DevelopmentThreshold    DevelopmentBER_pct
     _______________    ____________________    __________________
 
-    "Adapter"                0.26873                 6.0938      
-    "DeepFilterNet"          0.27551                 7.5174      
-    "Noisy"                  0.27008                 6.0417      
-    "Resample_only"          0.26879                 6.0938      
-    "SS_a0p5"                 0.2741                 7.4653      
-    "SS_a1p0"                0.30697                 8.2465      
-    "SS_a1p5"                0.28943                 8.6111      
-    "SS_a2p0"                0.27249                 9.0278      
-    "SS_a3p0"                0.32555                 9.0972      
-    "Tracking_SS"            0.26438                 6.7708      
-    "VAD_SS"                  0.3023                 9.1319      
+    "Adapter"                0.26873                 6.0938
+    "DeepFilterNet"          0.27551                 7.5174
+    "Noisy"                  0.27008                 6.0417
+    "Resample_only"          0.26879                 6.0938
+    "SS_a0p5"                 0.2741                 7.4653
+    "SS_a1p0"                0.30697                 8.2465
+    "SS_a1p5"                0.28943                 8.6111
+    "SS_a2p0"                0.27249                 9.0278
+    "SS_a3p0"                0.32555                 9.0972
+    "Tracking_SS"            0.26438                 6.7708
+    "VAD_SS"                  0.3023                 9.1319
 ```
 
 ```matlab
@@ -733,7 +722,7 @@ selectionTable=table(selection.quality_alpha,selection.identity_alpha,parameters
     SI_SDR_selected_alpha    EER_selected_alpha    Noisy_development_threshold
     _____________________    __________________    ___________________________
 
-              3                     0.5                      0.27008          
+              3                     0.5                      0.27008
 ```
 
 ```matlab
@@ -752,17 +741,17 @@ disp(devMain(:,{'Method','TargetSI_SDRGain_dB','TargetSTOIChange','ExternalEER_p
         Method         TargetSI_SDRGain_dB    TargetSTOIChange    ExternalEER_pct
     _______________    ___________________    ________________    _______________
 
-    "Adapter"               -0.003031            1.2568e-06           7.0833     
-    "DeepFilterNet"            8.2105              0.023757           9.5833     
-    "Noisy"                 1.674e-16            2.8912e-18           7.0833     
-    "Resample_only"        -0.0030306            1.2955e-06           7.1181     
-    "SS_a0p5"                  0.4984            0.00018977           8.5417     
-    "SS_a1p0"                 0.92612            -0.0011465           9.6181     
-    "SS_a1p5"                  1.2894            -0.0029527           10.347     
-    "SS_a2p0"                  1.5948            -0.0049906           10.312     
-    "SS_a3p0"                   2.068            -0.0093487           10.625     
-    "Tracking_SS"              1.8695             0.0027727           7.9514     
-    "VAD_SS"                   1.2134             -0.022317            11.25     
+    "Adapter"               -0.003031            1.2568e-06           7.0833
+    "DeepFilterNet"            8.2105              0.023757           9.5833
+    "Noisy"                 1.674e-16            2.8912e-18           7.0833
+    "Resample_only"        -0.0030306            1.2955e-06           7.1181
+    "SS_a0p5"                  0.4984            0.00018977           8.5417
+    "SS_a1p0"                 0.92612            -0.0011465           9.6181
+    "SS_a1p5"                  1.2894            -0.0029527           10.347
+    "SS_a2p0"                  1.5948            -0.0049906           10.312
+    "SS_a3p0"                   2.068            -0.0093487           10.625
+    "Tracking_SS"              1.8695             0.0027727           7.9514
+    "VAD_SS"                   1.2134             -0.022317            11.25
 ```
 
 ```matlab
@@ -773,7 +762,7 @@ writetable(selectionTable,fullfile(devRoot,'results','development_selection.csv'
 save(fullfile(ctx.runRoot,'development_parameters.mat'),'parameters','selection','-v7');
 ```
 
-Tables 22–24: Maximum mean development SI\-SDR selects α = 3, while minimum external\-verification EER selects α = 0.5. Noisy development scores select a BER\-minimizing threshold of approximately 0.270079. The test experiment uses these computed parameters without further adjustment.
+Tables 22–24: Maximum mean development SI-SDR selects α = 3, while minimum external-verification EER selects α = 0.5. Noisy development scores select a BER-minimizing threshold of approximately 0.270079. The test experiment uses these computed parameters without further adjustment.
 
 # 15. Generate test mixtures
 
@@ -791,30 +780,30 @@ disp(groupsummary(queries,{'ParticipantRole','NoiseClass','InputSNR_dB'}));
     ParticipantRole      NoiseClass       InputSNR_dB    GroupCount
     _______________    _______________    ___________    __________
 
-    "external_test"    "Babble"               -5             30    
-    "external_test"    "Babble"                0             30    
-    "external_test"    "Babble"                5             30    
-    "external_test"    "Babble"               10             30    
-    "external_test"    "HighVariation"        -5             30    
-    "external_test"    "HighVariation"         0             30    
-    "external_test"    "HighVariation"         5             30    
-    "external_test"    "HighVariation"        10             30    
-    "external_test"    "LowVariation"         -5             30    
-    "external_test"    "LowVariation"          0             30    
-    "external_test"    "LowVariation"          5             30    
-    "external_test"    "LowVariation"         10             30    
-    "target"           "Babble"               -5             60    
-    "target"           "Babble"                0             60    
-    "target"           "Babble"                5             60    
-    "target"           "Babble"               10             60    
-    "target"           "HighVariation"        -5             60    
-    "target"           "HighVariation"         0             60    
-    "target"           "HighVariation"         5             60    
-    "target"           "HighVariation"        10             60    
-    "target"           "LowVariation"         -5             60    
-    "target"           "LowVariation"          0             60    
-    "target"           "LowVariation"          5             60    
-    "target"           "LowVariation"         10             60    
+    "external_test"    "Babble"               -5             30
+    "external_test"    "Babble"                0             30
+    "external_test"    "Babble"                5             30
+    "external_test"    "Babble"               10             30
+    "external_test"    "HighVariation"        -5             30
+    "external_test"    "HighVariation"         0             30
+    "external_test"    "HighVariation"         5             30
+    "external_test"    "HighVariation"        10             30
+    "external_test"    "LowVariation"         -5             30
+    "external_test"    "LowVariation"          0             30
+    "external_test"    "LowVariation"          5             30
+    "external_test"    "LowVariation"         10             30
+    "target"           "Babble"               -5             60
+    "target"           "Babble"                0             60
+    "target"           "Babble"                5             60
+    "target"           "Babble"               10             60
+    "target"           "HighVariation"        -5             60
+    "target"           "HighVariation"         0             60
+    "target"           "HighVariation"         5             60
+    "target"           "HighVariation"        10             60
+    "target"           "LowVariation"         -5             60
+    "target"           "LowVariation"          0             60
+    "target"           "LowVariation"          5             60
+    "target"           "LowVariation"         10             60
 ```
 
 ```matlab
@@ -826,15 +815,14 @@ disp(table(testSNR,'VariableNames',{'Maximum_SNR_error_dB'}));
     Maximum_SNR_error_dB
     ____________________
 
-         5.5644e-08     
+         5.5644e-08
 ```
 
-
-Tables 25 and 26: Test\-mixture counts by speaker group, noise category and SNR, and the maximum SNR deviation.
+Tables 25 and 26: Test-mixture counts by speaker group, noise category and SNR, and the maximum SNR deviation.
 
 # 16. Test: traditional methods and component decomposition
 
-Apply the same five α values of percentile spectral subtraction, VAD\_SS and Tracking\_SS to the test set, then calculate their metrics.
+Apply the same five α values of percentile spectral subtraction, VAD_SS and Tracking_SS to the test set, then calculate their metrics.
 
 ```matlab
 assert(exist('root','var')==1 && exist('queries','var')==1,'Run Sections 1–15 in order first.');
@@ -848,23 +836,21 @@ disp(groupsummary(quality(quality.ParticipantRole=="target",:),'Method','mean', 
        Method        GroupCount    mean_SI_SDRImprovement_dB    mean_STOIChange    mean_NoiseReduction_dB    mean_SpeechRetained_pct
     _____________    __________    _________________________    _______________    ______________________    _______________________
 
-    "Noisy"             720               7.3387e-17              -4.3175e-18           -1.3486e-14                     100         
-    "SS_a0p5"           720                  0.40582               0.00010937               0.71451                  94.656         
-    "SS_a1p0"           720                  0.70282               -0.0015224                1.2664                  91.195         
-    "SS_a1p5"           720                   0.9293                -0.003706                1.7376                  88.404         
-    "SS_a2p0"           720                   1.1046               -0.0061625                2.1523                   86.03         
-    "SS_a3p0"           720                   1.3475                -0.011181                2.8628                    82.1         
-    "Tracking_SS"       720                   1.1674                0.0015701                1.9049                  90.381         
-    "VAD_SS"            720                  0.50563                -0.023239                4.0581                  67.255         
+    "Noisy"             720               7.3387e-17              -4.3175e-18           -1.3486e-14                     100
+    "SS_a0p5"           720                  0.40582               0.00010937               0.71451                  94.656
+    "SS_a1p0"           720                  0.70282               -0.0015224                1.2664                  91.195
+    "SS_a1p5"           720                   0.9293                -0.003706                1.7376                  88.404
+    "SS_a2p0"           720                   1.1046               -0.0061625                2.1523                   86.03
+    "SS_a3p0"           720                   1.3475                -0.011181                2.8628                    82.1
+    "Tracking_SS"       720                   1.1674                0.0015701                1.9049                  90.381
+    "VAD_SS"            720                  0.50563                -0.023239                4.0581                  67.255
 ```
 
+Table 27: Mean noise reduction, retained speech energy, SI-SDR gain and STOI change for the traditional methods.
 
+# 17. Test: DeepFilterNet and signal-transfer controls
 
-Table 27: Mean noise reduction, retained speech energy, SI\-SDR gain and STOI change for the traditional methods.
-
-# 17. Test: DeepFilterNet and signal\-transfer controls
-
-Resample noisy speech from 16 to 48 kHz, apply DeepFilterNet, compensate its output delay and resample to 16 kHz. Resample\_only performs resampling alone. Adapter additionally applies PCM16 quantization to examine the effects of resampling and quantization.
+Resample noisy speech from 16 to 48 kHz, apply DeepFilterNet, compensate its output delay and resample to 16 kHz. Resample_only performs resampling alone. Adapter additionally applies PCM16 quantization to examine the effects of resampling and quantization.
 
 ```matlab
 assert(exist('root','var')==1 && exist('quality','var')==1,'Run Sections 1–16 in order first.');
@@ -876,7 +862,7 @@ disp(p_deepfilter_settings(root));
     Model_sample_rate_Hz    Aligned_output_rate_Hz    Delay_compensation_48k_samples    Additional_input_gain
     ____________________    ______________________    ______________________________    _____________________
 
-           48000                    16000                          1440                           1          
+           48000                    16000                          1440                           1
 ```
 
 ```matlab
@@ -889,28 +875,28 @@ qualitySummary=groupsummary(quality,{'ParticipantRole','Method'},'mean',{'SI_SDR
     ParticipantRole        Method         GroupCount    mean_SI_SDRImprovement_dB    mean_STOIChange
     _______________    _______________    __________    _________________________    _______________
 
-    "external_test"    "Adapter"             360               -0.0090627                5.442e-08  
-    "external_test"    "DeepFilterNet"       360                   6.3177                 0.024107  
-    "external_test"    "Noisy"               360               7.8053e-18               7.7099e-18  
-    "external_test"    "Resample_only"       360               -0.0090624               9.3479e-08  
-    "external_test"    "SS_a0p5"             360                  0.40784               0.00033942  
-    "external_test"    "SS_a1p0"             360                   0.7076              -0.00088001  
-    "external_test"    "SS_a1p5"             360                  0.93672               -0.0027154  
-    "external_test"    "SS_a2p0"             360                   1.1139               -0.0048373  
-    "external_test"    "SS_a3p0"             360                   1.3576               -0.0094276  
-    "external_test"    "Tracking_SS"         360                   1.1415                0.0015551  
-    "external_test"    "VAD_SS"              360                  0.46453                -0.022722  
-    "target"           "Adapter"             720                -0.019334              -7.1393e-09  
-    "target"           "DeepFilterNet"       720                    6.258                 0.029086  
-    "target"           "Noisy"               720               7.3387e-17              -4.3175e-18  
-    "target"           "Resample_only"       720                -0.019334               3.9824e-08  
-    "target"           "SS_a0p5"             720                  0.40582               0.00010937  
-    "target"           "SS_a1p0"             720                  0.70282               -0.0015224  
-    "target"           "SS_a1p5"             720                   0.9293                -0.003706  
-    "target"           "SS_a2p0"             720                   1.1046               -0.0061625  
-    "target"           "SS_a3p0"             720                   1.3475                -0.011181  
-    "target"           "Tracking_SS"         720                   1.1674                0.0015701  
-    "target"           "VAD_SS"              720                  0.50563                -0.023239  
+    "external_test"    "Adapter"             360               -0.0090627                5.442e-08
+    "external_test"    "DeepFilterNet"       360                   6.3177                 0.024107
+    "external_test"    "Noisy"               360               7.8053e-18               7.7099e-18
+    "external_test"    "Resample_only"       360               -0.0090624               9.3479e-08
+    "external_test"    "SS_a0p5"             360                  0.40784               0.00033942
+    "external_test"    "SS_a1p0"             360                   0.7076              -0.00088001
+    "external_test"    "SS_a1p5"             360                  0.93672               -0.0027154
+    "external_test"    "SS_a2p0"             360                   1.1139               -0.0048373
+    "external_test"    "SS_a3p0"             360                   1.3576               -0.0094276
+    "external_test"    "Tracking_SS"         360                   1.1415                0.0015551
+    "external_test"    "VAD_SS"              360                  0.46453                -0.022722
+    "target"           "Adapter"             720                -0.019334              -7.1393e-09
+    "target"           "DeepFilterNet"       720                    6.258                 0.029086
+    "target"           "Noisy"               720               7.3387e-17              -4.3175e-18
+    "target"           "Resample_only"       720                -0.019334               3.9824e-08
+    "target"           "SS_a0p5"             720                  0.40582               0.00010937
+    "target"           "SS_a1p0"             720                  0.70282               -0.0015224
+    "target"           "SS_a1p5"             720                   0.9293                -0.003706
+    "target"           "SS_a2p0"             720                   1.1046               -0.0061625
+    "target"           "SS_a3p0"             720                   1.3475                -0.011181
+    "target"           "Tracking_SS"         720                   1.1674                0.0015701
+    "target"           "VAD_SS"              720                  0.50563                -0.023239
 ```
 
 ```matlab
@@ -919,13 +905,13 @@ tiledlayout(1,2);nexttile;bar(categorical(targetQuality.Method),targetQuality.me
 nexttile;bar(categorical(targetQuality.Method),targetQuality.mean_STOIChange);ylabel('STOI change');xtickangle(45);grid on;
 ```
 
-![figure_10.png](final_project_preview_media/figure_10.png)
+![MATLAB figure 11](final_project_preview_media/figure_10.png)
 
-Table 28 reads delay and gain settings from this run’s DeepFilterNet audit. Table 29 separates enrolled and unenrolled speakers; Figure 11 shows enrolled\-speaker means. DeepFilterNet does not expose the explicit time–frequency gain used in this decomposition, so retained speech energy is not computed for it by this procedure.
+Table 28 reads delay and gain settings from this run’s DeepFilterNet audit. Table 29 separates enrolled and unenrolled speakers; Figure 11 shows enrolled-speaker means. DeepFilterNet does not expose the explicit time–frequency gain used in this decomposition, so retained speech energy is not computed for it by this procedure.
 
 # 18. Extract embeddings and compute cosine scores
 
-ECAPA extracts a 192\-dimensional speaker embedding from each five\-second recording. Normalize the embeddings and calculate cosine similarity with each of the 20 enrollment embeddings. Higher scores indicate greater similarity between the speaker characteristics represented by the model. p\_experiment\_scores() also associates each score with its enrollment reference and genuine or impostor trial label.
+ECAPA extracts a 192-dimensional speaker embedding from each five-second recording. Normalize the embeddings and calculate cosine similarity with each of the 20 enrollment embeddings. Higher scores indicate greater similarity between the speaker characteristics represented by the model. p_experiment_scores() also associates each score with its enrollment reference and genuine or impostor trial label.
 
 ```matlab
 assert(exist('root','var')==1 && exist('quality','var')==1,'Run Sections 1–17 in order first.');
@@ -941,7 +927,7 @@ disp(table(height(experiment.Q),scoreShape(2),numel(experiment.methods),scoreSha
     Test_mixtures    Enrollment_comparisons_per_query    Methods    Enrollment_sets
     _____________    ________________________________    _______    _______________
 
-        1080                        20                     11              2       
+        1080                        20                     11              2
 ```
 
 ```matlab
@@ -953,7 +939,7 @@ disp(table(nnz(experiment.genuine),nnz(experiment.external),nnz(experiment.inter
     Genuine_trials_per_method    External_impostor_trials_per_method    Internal_impostor_trials_per_method
     _________________________    ___________________________________    ___________________________________
 
-               720                              7200                                   13680               
+               720                              7200                                   13680
 ```
 
 ```matlab
@@ -972,15 +958,14 @@ exampleCosine=vectors(qix,:)*vectors(rix,:)';disp(table(queryID,reference.ClipID
            Test_recording            Enrollment_recording     Cosine_score
     _____________________________    _____________________    ____________
 
-    "test_base_0157_snr_-5_Noisy"    "clean_61-70968-0005"      0.12101   
+    "test_base_0157_snr_-5_Noisy"    "clean_61-70968-0005"      0.12101
 ```
 
-
-Tables 30–32: Scoring dimensions, trial counts and one genuine\-score example. Genuine trials compare the same speaker’s test and enrollment recordings. Internal\-impostor trials use other enrolled speakers; external\-impostor trials use unenrolled speakers. The primary analysis uses genuine and external\-impostor trials.
+Tables 30–32: Scoring dimensions, trial counts and one genuine-score example. Genuine trials compare the same speaker’s test and enrollment recordings. Internal-impostor trials use other enrolled speakers; external-impostor trials use unenrolled speakers. The primary analysis uses genuine and external-impostor trials.
 
 # 19. Calculate EER, BER, FAR and FRR
 
-FAR is the proportion of impostor trials incorrectly accepted; FRR is the proportion of genuine trials incorrectly rejected. BER = (FAR + FRR)/2. EER is interpolated at the crossing of FAR and FRR as the threshold varies, and is independent of a particular fixed decision threshold. The main BER, FAR and FRR use the common threshold selected from Noisy development scores. OwnDevThresholdBER separately uses the threshold selected for each method on development data. p\_verification\_metrics() calculates these rates from scores and labels. p\_experiment\_summary() combines them with the waveform metrics for each system.
+FAR is the proportion of impostor trials incorrectly accepted; FRR is the proportion of genuine trials incorrectly rejected. BER = (FAR + FRR)/2. EER is interpolated at the crossing of FAR and FRR as the threshold varies, and is independent of a particular fixed decision threshold. The main BER, FAR and FRR use the common threshold selected from Noisy development scores. OwnDevThresholdBER separately uses the threshold selected for each method on development data. p_verification_metrics() calculates these rates from scores and labels. p_experiment_summary() combines them with the waveform metrics for each system.
 
 ```matlab
 assert(exist('experiment','var')==1 && exist('quality','var')==1 && exist('parameters','var')==1,'Run Sections 1–18 in order first.');
@@ -994,17 +979,17 @@ disp(primary(:,{'Method','ExternalEER_pct','InternalEER_pct','CommonThresholdBER
         Method         ExternalEER_pct    InternalEER_pct    CommonThresholdBER_pct    CommonThresholdFAR_pct    CommonThresholdFRR_pct    OwnDevThresholdBER_pct
     _______________    _______________    _______________    ______________________    ______________________    ______________________    ______________________
 
-    "Adapter"              7.0833             7.3611                 5.8889                    1.9167                    9.8611                    5.9028        
-    "DeepFilterNet"        9.0278             9.4371                 8.6806                    2.9167                    14.444                     8.875        
-    "Noisy"                7.0833                7.5                 5.8472                    1.8333                    9.8611                    5.8472        
-    "Resample_only"        7.0833             7.3611                 5.8889                    1.9167                    9.8611                    5.9028        
-    "SS_a0p5"              7.3611             7.6389                 6.5347                    2.5139                    10.556                    6.7014        
-    "SS_a1p0"              7.8472             8.4722                 7.0972                    2.8056                    11.389                    7.9583        
-    "SS_a1p5"              8.7639             9.1667                 7.6944                    3.1667                    12.222                    8.0556        
-    "SS_a2p0"              9.1667             9.1667                 8.2222                    3.3889                    13.056                    8.4028        
-    "SS_a3p0"              9.7222                 10                 9.0278                      3.75                    14.306                    9.8611        
-    "Tracking_SS"          7.6389             8.0556                 6.6736                    2.5139                    10.833                    6.7292        
-    "VAD_SS"                   10             10.556                 9.5208                    3.0694                    15.972                    9.9861        
+    "Adapter"              7.0833             7.3611                 5.8889                    1.9167                    9.8611                    5.9028
+    "DeepFilterNet"        9.0278             9.4371                 8.6806                    2.9167                    14.444                     8.875
+    "Noisy"                7.0833                7.5                 5.8472                    1.8333                    9.8611                    5.8472
+    "Resample_only"        7.0833             7.3611                 5.8889                    1.9167                    9.8611                    5.9028
+    "SS_a0p5"              7.3611             7.6389                 6.5347                    2.5139                    10.556                    6.7014
+    "SS_a1p0"              7.8472             8.4722                 7.0972                    2.8056                    11.389                    7.9583
+    "SS_a1p5"              8.7639             9.1667                 7.6944                    3.1667                    12.222                    8.0556
+    "SS_a2p0"              9.1667             9.1667                 8.2222                    3.3889                    13.056                    8.4028
+    "SS_a3p0"              9.7222                 10                 9.0278                      3.75                    14.306                    9.8611
+    "Tracking_SS"          7.6389             8.0556                 6.6736                    2.5139                    10.833                    6.7292
+    "VAD_SS"                   10             10.556                 9.5208                    3.0694                    15.972                    9.9861
 ```
 
 ```matlab
@@ -1016,7 +1001,7 @@ disp(table(parameters.common_threshold,parameters.quality_alpha,parameters.ident
     Decision threshold    SI_SDR_selected_alpha    EER_selected_alpha
     __________________    _____________________    __________________
 
-         0.27008                    3                     0.5        
+         0.27008                    3                     0.5
 ```
 
 ```matlab
@@ -1028,13 +1013,13 @@ histogram(s(experiment.external),scoreBinEdges,'Normalization','probability');xl
 xlabel('Cosine similarity');ylabel('Proportion');legend('Genuine','External impostor','Decision threshold');title('DeepFilterNet verification scores');
 ```
 
-![figure_11.png](final_project_preview_media/figure_11.png)
+![MATLAB figure 12](final_project_preview_media/figure_11.png)
 
 Tables 33 and 34 and Figure 12: Default subtraction and DeepFilterNet both have higher EER and BER than Noisy. At the common threshold, default subtraction increases FAR/FRR by approximately 1.33/2.36 percentage points, and DeepFilterNet by 1.08/4.58 points. FRR increases by more percentage points for these two methods.
 
 # 20. Results by SNR, noise category and source
 
-Calculate verification EER separately by SNR, noise category and source to compare methods under different conditions. p\_conditional\_verification() groups trials by noise category and SNR; p\_source\_verification() computes the sourcewise results.
+Calculate verification EER separately by SNR, noise category and source to compare methods under different conditions. p_conditional_verification() groups trials by noise category and SNR; p_source_verification() computes the sourcewise results.
 
 ```matlab
 assert(exist('primary','var')==1 && exist('experiment','var')==1 && exist('parameters','var')==1,'Run Sections 1–19 in order first.');
@@ -1056,26 +1041,26 @@ disp(conditional(conditional.NoiseClass=="ALL" & ismember(conditional.Method,mai
         Method         NoiseClass    NoiseSourceID    InputSNR_dB    GenuineTrials    ExternalTrials    EER_pct    BER_pct
     _______________    __________    _____________    ___________    _____________    ______________    _______    _______
 
-    "DeepFilterNet"      "ALL"           "ALL"            -5              180              1800          18.333    21.083 
-    "Noisy"              "ALL"           "ALL"            -5              180              1800          16.111    16.694 
-    "SS_a0p5"            "ALL"           "ALL"            -5              180              1800          16.667     17.75 
-    "SS_a1p5"            "ALL"           "ALL"            -5              180              1800              20    19.611 
-    "SS_a3p0"            "ALL"           "ALL"            -5              180              1800          22.222    23.111 
-    "DeepFilterNet"      "ALL"           "ALL"             0              180              1800             8.5    8.4444 
-    "Noisy"              "ALL"           "ALL"             0              180              1800               5    4.1111 
-    "SS_a0p5"            "ALL"           "ALL"             0              180              1800          5.5556    5.4722 
-    "SS_a1p5"            "ALL"           "ALL"             0              180              1800          7.7778       7.5 
-    "SS_a3p0"            "ALL"           "ALL"             0              180              1800          9.2778    8.2222 
-    "DeepFilterNet"      "ALL"           "ALL"             5              180              1800          3.3333    3.3333 
-    "Noisy"              "ALL"           "ALL"             5              180              1800         0.61111    1.3056 
-    "SS_a0p5"            "ALL"           "ALL"             5              180              1800             1.5    1.5278 
-    "SS_a1p5"            "ALL"           "ALL"             5              180              1800          2.2222    2.0278 
-    "SS_a3p0"            "ALL"           "ALL"             5              180              1800          2.6667    2.8056 
-    "DeepFilterNet"      "ALL"           "ALL"            10              180              1800         0.83333    1.8611 
-    "Noisy"              "ALL"           "ALL"            10              180              1800         0.16667    1.2778 
-    "SS_a0p5"            "ALL"           "ALL"            10              180              1800         0.55556    1.3889 
-    "SS_a1p5"            "ALL"           "ALL"            10              180              1800         0.55556    1.6389 
-    "SS_a3p0"            "ALL"           "ALL"            10              180              1800         0.66667    1.9722 
+    "DeepFilterNet"      "ALL"           "ALL"            -5              180              1800          18.333    21.083
+    "Noisy"              "ALL"           "ALL"            -5              180              1800          16.111    16.694
+    "SS_a0p5"            "ALL"           "ALL"            -5              180              1800          16.667     17.75
+    "SS_a1p5"            "ALL"           "ALL"            -5              180              1800              20    19.611
+    "SS_a3p0"            "ALL"           "ALL"            -5              180              1800          22.222    23.111
+    "DeepFilterNet"      "ALL"           "ALL"             0              180              1800             8.5    8.4444
+    "Noisy"              "ALL"           "ALL"             0              180              1800               5    4.1111
+    "SS_a0p5"            "ALL"           "ALL"             0              180              1800          5.5556    5.4722
+    "SS_a1p5"            "ALL"           "ALL"             0              180              1800          7.7778       7.5
+    "SS_a3p0"            "ALL"           "ALL"             0              180              1800          9.2778    8.2222
+    "DeepFilterNet"      "ALL"           "ALL"             5              180              1800          3.3333    3.3333
+    "Noisy"              "ALL"           "ALL"             5              180              1800         0.61111    1.3056
+    "SS_a0p5"            "ALL"           "ALL"             5              180              1800             1.5    1.5278
+    "SS_a1p5"            "ALL"           "ALL"             5              180              1800          2.2222    2.0278
+    "SS_a3p0"            "ALL"           "ALL"             5              180              1800          2.6667    2.8056
+    "DeepFilterNet"      "ALL"           "ALL"            10              180              1800         0.83333    1.8611
+    "Noisy"              "ALL"           "ALL"            10              180              1800         0.16667    1.2778
+    "SS_a0p5"            "ALL"           "ALL"            10              180              1800         0.55556    1.3889
+    "SS_a1p5"            "ALL"           "ALL"            10              180              1800         0.55556    1.6389
+    "SS_a3p0"            "ALL"           "ALL"            10              180              1800         0.66667    1.9722
 ```
 
 ```matlab
@@ -1091,7 +1076,7 @@ end
 legend('Location','best','Interpreter','none');
 ```
 
-![figure_12.png](final_project_preview_media/figure_12.png)
+![MATLAB figure 13](final_project_preview_media/figure_12.png)
 
 ```matlab
 figure('Color','w','Position',[100 100 1000 450]);sourceSummary=p_source_verification(experiment,parameters);sourceBase=sortrows(sourceSummary(sourceSummary.Method=="Noisy",:),"NoiseSourceID");
@@ -1105,15 +1090,15 @@ disp(table(sourceBase.NoiseSourceID,sourceBase.EER_pct,sourceSS.EER_pct-sourceBa
      Noise_source      Noisy_EER_pct    SS_minus_Noisy_pp    DFN_minus_Noisy_pp
     _______________    _____________    _________________    __________________
 
-    "BABBLE_test_1"         12.5                  5                       0    
-    "BABBLE_test_2"       15.625              3.125                   4.375    
-    "BABBLE_test_3"          9.5              -0.75                     0.5    
-    "NRIVER"               3.375                2.5                   7.375    
-    "OMEETING"               2.5               1.25                    1.25    
-    "PRESTO"                8.75               3.75                       5    
-    "STRAFFIC"              1.25              0.625              4.4409e-15    
-    "TCAR"                     0              0.625                       0    
-    "TMETRO"                   0               1.25                   0.875    
+    "BABBLE_test_1"         12.5                  5                       0
+    "BABBLE_test_2"       15.625              3.125                   4.375
+    "BABBLE_test_3"          9.5              -0.75                     0.5
+    "NRIVER"               3.375                2.5                   7.375
+    "OMEETING"               2.5               1.25                    1.25
+    "PRESTO"                8.75               3.75                       5
+    "STRAFFIC"              1.25              0.625              4.4409e-15
+    "TCAR"                     0              0.625                       0
+    "TMETRO"                   0               1.25                   0.875
 ```
 
 ```matlab
@@ -1124,17 +1109,17 @@ end
 ylabel('External-impostor EER / %');xtickangle(45);legend('Location','best','Interpreter','none');grid on;
 ```
 
-![figure_13.png](final_project_preview_media/figure_13.png)
+![MATLAB figure 14](final_project_preview_media/figure_13.png)
 
 ```matlab
 writetable(sourceSummary,fullfile(root,'results','source_verification.csv'));
 ```
 
-Table 35 and Figure 13: DeepFilterNet\-minus\-Noisy EER differences at −5, 0, 5 and 10 dB are approximately 2.22, 3.50, 2.72 and 0.67 percentage points, without a monotonic pattern. Table 36 and Figure 14 show uneven source differences: the DeepFilterNet difference ranges from approximately 0 to 7.38 points and is largest for NRIVER. Each source has only 80 genuine and 800 external\-impostor trials; these are sourcewise point estimates. Category differences also include spectrum and background speech, so they cannot be attributed solely to energy variability.
+Table 35 and Figure 13: DeepFilterNet-minus-Noisy EER differences at −5, 0, 5 and 10 dB are approximately 2.22, 3.50, 2.72 and 0.67 percentage points, without a monotonic pattern. Table 36 and Figure 14 show uneven source differences: the DeepFilterNet difference ranges from approximately 0 to 7.38 points and is largest for NRIVER. Each source has only 80 genuine and 800 external-impostor trials; these are sourcewise point estimates. Category differences also include spectrum and background speech, so they cannot be attributed solely to energy variability.
 
 # 21. α, waveform metrics and verification errors
 
-Compare SI\-SDR gain and verification EER across five α values. Highlight the development selections, α = 3 for SI\-SDR and α = 0.5 for EER, to examine the relationship between subtraction strength and verification performance.
+Compare SI-SDR gain and verification EER across five α values. Highlight the development selections, α = 3 for SI-SDR and α = 0.5 for EER, to examine the relationship between subtraction strength and verification performance.
 
 ```matlab
 assert(exist('primary','var')==1 && exist('alphaMethods','var')==1 && exist('alphas','var')==1,'Run Sections 1–19 in order first.');
@@ -1147,11 +1132,11 @@ alphaTable=table(alphas,primary.TargetSI_SDRGain_dB(ix),primary.TargetSTOIChange
     alpha    SISDRGain_dB    STOIChange    EER_pct
     _____    ____________    __________    _______
 
-     0.5       0.40582       0.00010937    7.3611 
-       1       0.70282       -0.0015224    7.8472 
-1.5        0.9293        -0.003706    8.7639
-       2        1.1046       -0.0061625    9.1667 
-       3        1.3475        -0.011181    9.7222 
+     0.5       0.40582       0.00010937    7.3611
+       1       0.70282       -0.0015224    7.8472
+     1.5        0.9293        -0.003706    8.7639
+       2        1.1046       -0.0061625    9.1667
+       3        1.3475        -0.011181    9.7222
 ```
 
 ```matlab
@@ -1168,29 +1153,23 @@ scatter(alphaTable.SISDRGain_dB(identityChoice),alphaTable.EER_pct(identityChoic
 xlabel('SI-SDR gain / dB');ylabel('External-impostor EER / %');grid on;legend('Location','best','Interpreter','none');
 ```
 
-![figure_14.png](final_project_preview_media/figure_14.png)
+![MATLAB figure 15](final_project_preview_media/figure_14.png)
 
-Table 37 and Figure 15: Test EER increases at each tested α step. Development EER also rises overall, with a small decrease between two intermediate settings. The EER\-selected α = 0.5 is the smallest candidate in this experiment.
+Table 37 and Figure 15: Test EER increases at each tested α step. Development EER also rises overall, with a small decrease between two intermediate settings. The EER-selected α = 0.5 is the smallest candidate in this experiment.
 
 # 22. Enhancement Δcos and case classification
 
-Enhancement Δcos is the change in cosine similarity between an utterance's embedding and its same\-utterance clean\-reference embedding: p\_experiment\_cases() applies the classification rules, and p\_case\_representative() selects the specified representative. p\_show\_case\_spectrum() displays its spectra.
+Enhancement Δcos is the change in cosine similarity between an utterance's embedding and its same-utterance clean-reference embedding: p_experiment_cases() applies the classification rules, and p_case_representative() selects the specified representative. p_show_case_spectrum() displays its spectra.
 
+Δcos = cos(enhanced embedding, same-utterance clean embedding) − cos(noisy embedding, same-utterance clean embedding).
 
-Δcos = cos(enhanced embedding, same\-utterance clean embedding) − cos(noisy embedding, same\-utterance clean embedding).
+Positive Δcos means that enhancement moves the embedding closer to the clean-utterance reference; negative Δcos means it moves farther away. Combine this diagnostic with SI-SDR gain to classify the samples. Verification decisions use the separate enrollment reference.
 
+Class A: SI-SDR gain > 1 dB and Δcos > 0.01. SI-SDR improves and the embedding moves closer to the same-utterance clean reference.
 
-Positive Δcos means that enhancement moves the embedding closer to the clean\-utterance reference; negative Δcos means it moves farther away. Combine this diagnostic with SI\-SDR gain to classify the samples. Verification decisions use the separate enrollment reference.
+Class B: SI-SDR gain > 1 dB and Δcos < −0.01. SI-SDR improves but the embedding moves farther from the same-utterance clean reference.
 
-
-Class A: SI\-SDR gain > 1 dB and Δcos > 0.01. SI\-SDR improves and the embedding moves closer to the same\-utterance clean reference.
-
-
-Class B: SI\-SDR gain > 1 dB and Δcos < −0.01. SI\-SDR improves but the embedding moves farther from the same\-utterance clean reference.
-
-
-Class C: |SI\-SDR gain| ≤ 1 dB and Δcos > 0.01. SI\-SDR changes little and the embedding moves closer to the same\-utterance clean reference.
-
+Class C: |SI-SDR gain| ≤ 1 dB and Δcos > 0.01. SI-SDR changes little and the embedding moves closer to the same-utterance clean reference.
 
 Other: Samples that meet none of these three definitions.
 
@@ -1203,24 +1182,24 @@ assert(exist('experiment','var')==1 && exist('quality','var')==1 && exist('ctx',
         Method          Case      Count    Total    Percentage
     _______________    _______    _____    _____    __________
 
-    "DeepFilterNet"    "A"          68      720       9.4444  
-    "DeepFilterNet"    "B"         464      720       64.444  
-    "DeepFilterNet"    "C"          18      720          2.5  
-    "DeepFilterNet"    "Other"     170      720       23.611  
-    "SS_a0p5"          "A"           0      720            0  
-    "SS_a0p5"          "B"          33      720       4.5833  
-    "SS_a0p5"          "C"          62      720       8.6111  
-    "SS_a0p5"          "Other"     625      720       86.806  
-    "SS_a1p5"          "A"           8      720       1.1111  
-    "SS_a1p5"          "B"         262      720       36.389  
-    "SS_a1p5"          "C"          40      720       5.5556  
-    "SS_a1p5"          "Other"     410      720       56.944  
-    "SS_a3p0"          "A"           9      720         1.25  
-    "SS_a3p0"          "B"         366      720       50.833  
-    "SS_a3p0"          "C"          33      720       4.5833  
-    "SS_a3p0"          "Other"     312      720       43.333  
+    "DeepFilterNet"    "A"          68      720       9.4444
+    "DeepFilterNet"    "B"         464      720       64.444
+    "DeepFilterNet"    "C"          18      720          2.5
+    "DeepFilterNet"    "Other"     170      720       23.611
+    "SS_a0p5"          "A"           0      720            0
+    "SS_a0p5"          "B"          33      720       4.5833
+    "SS_a0p5"          "C"          62      720       8.6111
+    "SS_a0p5"          "Other"     625      720       86.806
+    "SS_a1p5"          "A"           8      720       1.1111
+    "SS_a1p5"          "B"         262      720       36.389
+    "SS_a1p5"          "C"          40      720       5.5556
+    "SS_a1p5"          "Other"     410      720       56.944
+    "SS_a3p0"          "A"           9      720         1.25
+    "SS_a3p0"          "B"         366      720       50.833
+    "SS_a3p0"          "C"          33      720       4.5833
+    "SS_a3p0"          "Other"     312      720       43.333
 
-        Method          Case            ConditionID                         ClipID                     Distance 
+        Method          Case            ConditionID                         ClipID                     Distance
     _______________    _______    _______________________    _____________________________________    __________
 
     "DeepFilterNet"    "A"        "test_base_0232_snr_-5"    "test_base_0232_snr_-5_DeepFilterNet"        1.5294
@@ -1273,26 +1252,26 @@ disp(transitions(ismember(transitions.Method,main) & transitions.NoisyAccepted~=
         Method              TrialType         NoisyAccepted    ProcessedAccepted    Count    Denominator
     _______________    ___________________    _____________    _________________    _____    ___________
 
-    "DeepFilterNet"    "genuine"                  false              true             15         720    
-    "DeepFilterNet"    "genuine"                  true               false            48         720    
-    "DeepFilterNet"    "external_impostor"        false              true            131        7200    
-    "DeepFilterNet"    "external_impostor"        true               false            53        7200    
-    "Noisy"            "genuine"                  false              true              0         720    
-    "Noisy"            "genuine"                  true               false             0         720    
-    "Noisy"            "external_impostor"        false              true              0        7200    
-    "Noisy"            "external_impostor"        true               false             0        7200    
-    "SS_a0p5"          "genuine"                  false              true              9         720    
-    "SS_a0p5"          "genuine"                  true               false            14         720    
-    "SS_a0p5"          "external_impostor"        false              true             94        7200    
-    "SS_a0p5"          "external_impostor"        true               false            45        7200    
-    "SS_a1p5"          "genuine"                  false              true             11         720    
-    "SS_a1p5"          "genuine"                  true               false            28         720    
-    "SS_a1p5"          "external_impostor"        false              true            144        7200    
-    "SS_a1p5"          "external_impostor"        true               false            48        7200    
-    "SS_a3p0"          "genuine"                  false              true             11         720    
-    "SS_a3p0"          "genuine"                  true               false            43         720    
-    "SS_a3p0"          "external_impostor"        false              true            193        7200    
-    "SS_a3p0"          "external_impostor"        true               false            55        7200    
+    "DeepFilterNet"    "genuine"                  false              true             15         720
+    "DeepFilterNet"    "genuine"                  true               false            48         720
+    "DeepFilterNet"    "external_impostor"        false              true            131        7200
+    "DeepFilterNet"    "external_impostor"        true               false            53        7200
+    "Noisy"            "genuine"                  false              true              0         720
+    "Noisy"            "genuine"                  true               false             0         720
+    "Noisy"            "external_impostor"        false              true              0        7200
+    "Noisy"            "external_impostor"        true               false             0        7200
+    "SS_a0p5"          "genuine"                  false              true              9         720
+    "SS_a0p5"          "genuine"                  true               false            14         720
+    "SS_a0p5"          "external_impostor"        false              true             94        7200
+    "SS_a0p5"          "external_impostor"        true               false            45        7200
+    "SS_a1p5"          "genuine"                  false              true             11         720
+    "SS_a1p5"          "genuine"                  true               false            28         720
+    "SS_a1p5"          "external_impostor"        false              true            144        7200
+    "SS_a1p5"          "external_impostor"        true               false            48        7200
+    "SS_a3p0"          "genuine"                  false              true             11         720
+    "SS_a3p0"          "genuine"                  true               false            43         720
+    "SS_a3p0"          "external_impostor"        false              true            193        7200
+    "SS_a3p0"          "external_impostor"        true               false            55        7200
 ```
 
 ```matlab
@@ -1305,15 +1284,15 @@ xline(ctx.analysis.case_thresholds.SI_SDR_gain_dB,'--','HandleVisibility','off')
 xlabel('SI-SDR gain / dB');ylabel('Enhancement DeltaCos');legend('Location','best','Interpreter','none');grid on;
 ```
 
-![figure_15.png](final_project_preview_media/figure_15.png)
+![MATLAB figure 16](final_project_preview_media/figure_15.png)
 
 ```matlab
 p_show_case_spectrum(root,representatives,ctx.parameters.cfg,ctx.language);
 ```
 
-![figure_16.png](final_project_preview_media/figure_16.png)
+![MATLAB figure 17](final_project_preview_media/figure_16.png)
 
-Tables 38–40 list case counts, representatives and verification transitions. Figure 16 shows the metric combinations; Figure 17 shows the DeepFilterNet class\-B representative. DeepFilterNet has 464/720 mixtures (64.4%) in class B. Mean SI\-SDR gains for percentile subtraction are approximately 0.4–1.3 dB, close to the 1 dB classification threshold; many samples meet none of A/B/C and fall in Other. Other is not missing data.
+Tables 38–40 list case counts, representatives and verification transitions. Figure 16 shows the metric combinations; Figure 17 shows the DeepFilterNet class-B representative. DeepFilterNet has 464/720 mixtures (64.4%) in class B. Mean SI-SDR gains for percentile subtraction are approximately 0.4–1.3 dB, close to the 1 dB classification threshold; many samples meet none of A/B/C and fall in Other. Other is not missing data.
 
 # 23. Speech preservation, noise estimation and frequency bands
 
@@ -1329,14 +1308,14 @@ disp(groupsummary(decomposition,'Method','mean',{'NoiseReduction_dB','SpeechReta
        Method        GroupCount    mean_NoiseReduction_dB    mean_SpeechRetained_pct    mean_DecompositionRelativeError
     _____________    __________    ______________________    _______________________    _______________________________
 
-    "Noisy"             720             -1.3486e-14                     100                       1.9466e-16           
-    "SS_a0p5"           720                 0.71451                  94.656                       1.9265e-16           
-    "SS_a1p0"           720                  1.2664                  91.195                       1.9068e-16           
-    "SS_a1p5"           720                  1.7376                  88.404                       1.8964e-16           
-    "SS_a2p0"           720                  2.1523                   86.03                       1.8887e-16           
-    "SS_a3p0"           720                  2.8628                    82.1                       1.8831e-16           
-    "Tracking_SS"       720                  1.9049                  90.381                       1.9645e-16           
-    "VAD_SS"            720                  4.0581                  67.255                        1.902e-16           
+    "Noisy"             720             -1.3486e-14                     100                       1.9466e-16
+    "SS_a0p5"           720                 0.71451                  94.656                       1.9265e-16
+    "SS_a1p0"           720                  1.2664                  91.195                       1.9068e-16
+    "SS_a1p5"           720                  1.7376                  88.404                       1.8964e-16
+    "SS_a2p0"           720                  2.1523                   86.03                       1.8887e-16
+    "SS_a3p0"           720                  2.8628                    82.1                       1.8831e-16
+    "Tracking_SS"       720                  1.9049                  90.381                       1.9645e-16
+    "VAD_SS"            720                  4.0581                  67.255                        1.902e-16
 ```
 
 ```matlab
@@ -1349,9 +1328,9 @@ disp(groupsummary(noiseDiagnosticsAll(noiseDiagnosticsAll.ParticipantRole=="targ
       NoiseClass       GroupCount    mean_InitEnergyActivityRatio    mean_VADSelectedEnergyActivityRatio    mean_PercentileSelectedEnergyActivityRatio    mean_VADNoisePSDTotalBias_dB    mean_PercentileNoisePSDTotalBias_dB    mean_TrackingNoisePSDTotalBias_dB
     _______________    __________    ____________________________    ___________________________________    __________________________________________    ____________________________    ___________________________________    _________________________________
 
-    "Babble"              240                  0.84583                             0.74434                                   0.61284                                 1.9779                             -3.9898                               -6.0791             
-    "HighVariation"       240                  0.84583                             0.76132                                   0.61274                                  2.069                             -4.1667                               -3.2669             
-    "LowVariation"        240                  0.84583                             0.76532                                   0.58995                                 2.0887                             -3.7887                               -3.0669             
+    "Babble"              240                  0.84583                             0.74434                                   0.61284                                 1.9779                             -3.9898                               -6.0791
+    "HighVariation"       240                  0.84583                             0.76132                                   0.61274                                  2.069                             -4.1667                               -3.2669
+    "LowVariation"        240                  0.84583                             0.76532                                   0.58995                                 2.0887                             -3.7887                               -3.0669
 ```
 
 ```matlab
@@ -1369,17 +1348,15 @@ end
 legend('Location','best','Interpreter','none');
 ```
 
-![figure_17.png](final_project_preview_media/figure_17.png)
+![MATLAB figure 18](final_project_preview_media/figure_17.png)
 
-Tables 41 and 42 and Figure 18: VAD\_SS shows lower speech\-energy retention and more negative Δcos than Tracking\_SS on many test mixtures, although their distributions overlap. Activity ratios use clean\-speech energy. Speech detected during VAD initialization may raise its noise estimate. The effect on verification remains to be tested separately.
+Tables 41 and 42 and Figure 18: VAD_SS shows lower speech-energy retention and more negative Δcos than Tracking_SS on many test mixtures, although their distributions overlap. Activity ratios use clean-speech energy. Speech detected during VAD initialization may raise its noise estimate. The effect on verification remains to be tested separately.
 
 # 24. Intervals, alternative enrollment, source omission and band interventions
 
-Estimate 95% confidence intervals for method differences using 20,000 bootstrap resamples. Resample target and unenrolled speakers separately within sex, retaining all utterances and noise conditions for each sampled speaker. All methods use the same draws. p\_experiment\_bootstrap() estimates the paired intervals. p\_experiment\_leave\_source() recalculates the comparisons after each source omission, using p\_leave\_source\_weights() to retain the planned weighting.
+Estimate 95% confidence intervals for method differences using 20,000 bootstrap resamples. Resample target and unenrolled speakers separately within sex, retaining all utterances and noise conditions for each sampled speaker. All methods use the same draws. p_experiment_bootstrap() estimates the paired intervals. p_experiment_leave_source() recalculates the comparisons after each source omission, using p_leave_source_weights() to retain the planned weighting.
 
-
-The primary analysis fixes the 20 enrollment references. In a secondary check, external\-impostor comparisons with each enrollment reference are additionally counted according to how often that enrolled speaker is sampled.
-
+The primary analysis fixes the 20 enrollment references. In a secondary check, external-impostor comparisons with each enrollment reference are additionally counted according to how often that enrolled speaker is sampled.
 
 Replace the primary enrollment recordings with the reserved alternatives, then omit each noise source in turn and recalculate the results. After an omission, retain equal weights for the three categories, four SNR levels and remaining sources within each category.
 
@@ -1392,11 +1369,11 @@ disp(resultSummary(resultSummary.ReferenceSet=="enrollment_backup" & ismember(re
         Method         ExternalEER_pct    CommonThresholdBER_pct
     _______________    _______________    ______________________
 
-    "DeepFilterNet"        8.9028                 8.3472        
-    "Noisy"                7.2222                 6.4653        
-    "SS_a0p5"              8.3333                 7.3681        
-    "SS_a1p5"              9.0278                 8.5972        
-    "SS_a3p0"              10.694                 9.3125        
+    "DeepFilterNet"        8.9028                 8.3472
+    "Noisy"                7.2222                 6.4653
+    "SS_a0p5"              8.3333                 7.3681
+    "SS_a1p5"              9.0278                 8.5972
+    "SS_a3p0"              10.694                 9.3125
 ```
 
 ```matlab
@@ -1405,7 +1382,7 @@ bootstrapTimer=tic;
 ```
 
 ```matlabTextOutput
-          Comparison           Endpoint    SynchronousRegistration    Difference_pp    Lower95_pp    Upper95_pp    Repetitions      Seed   
+          Comparison           Endpoint    SynchronousRegistration    Difference_pp    Lower95_pp    Upper95_pp    Repetitions      Seed
     _______________________    ________    _______________________    _____________    __________    __________    ___________    _________
 
     "SS_a1p5 - Noisy"           "EER"               false                 1.6806           0.25         3.1944        20000       5.308e+05
@@ -1436,21 +1413,21 @@ leaveSource=p_experiment_leave_source(experiment,parameters);disp(p_leave_source
           Comparison           Endpoint    MinimumDifference_pp    MaximumDifference_pp    Positive    Negative    NearZero
     _______________________    ________    ____________________    ____________________    ________    ________    ________
 
-    "SS_a1p5 - Noisy"           "EER"             1.0278                   2.4306             9           0           0    
-    "SS_a1p5 - Noisy"           "BER"             1.5313                   2.2292             9           0           0    
-    "DeepFilterNet - Noisy"     "EER"             1.4444                      2.5             9           0           0    
-    "DeepFilterNet - Noisy"     "BER"             2.2951                   3.4618             9           0           0    
-    "SS_a0p5 - SS_a1p5"         "EER"            -1.6667                  -1.3889             0           9           0    
-    "SS_a0p5 - SS_a1p5"         "BER"            -1.4132                 -0.93403             0           9           0    
-    "SS_a0p5 - SS_a3p0"         "EER"             -3.125                  -2.0833             0           9           0    
-    "SS_a0p5 - SS_a3p0"         "BER"            -2.9028                  -2.2361             0           9           0    
+    "SS_a1p5 - Noisy"           "EER"             1.0278                   2.4306             9           0           0
+    "SS_a1p5 - Noisy"           "BER"             1.5313                   2.2292             9           0           0
+    "DeepFilterNet - Noisy"     "EER"             1.4444                      2.5             9           0           0
+    "DeepFilterNet - Noisy"     "BER"             2.2951                   3.4618             9           0           0
+    "SS_a0p5 - SS_a1p5"         "EER"            -1.6667                  -1.3889             0           9           0
+    "SS_a0p5 - SS_a1p5"         "BER"            -1.4132                 -0.93403             0           9           0
+    "SS_a0p5 - SS_a3p0"         "EER"             -3.125                  -2.0833             0           9           0
+    "SS_a0p5 - SS_a3p0"         "BER"            -2.9028                  -2.2361             0           9           0
 ```
 
 ```matlab
 writetable(leaveSource,fullfile(root,'results','leave_source_comparisons.csv'));
 ```
 
-Tables 43–45: The four primary EER\-difference intervals are \[0.25, 3.19\], \[0.46, 3.61\], \[−2.22, −0.71\] and \[−3.61, −1.35\] percentage points. Each excludes zero, and the BER intervals show the same pattern. Leave\-one\-source\-out checks preserve the directions of all four comparisons. These intervals use fixed noise sources and no multiple\-comparison adjustment.
+Tables 43–45: The four primary EER-difference intervals are [0.25, 3.19], [0.46, 3.61], [−2.22, −0.71] and [−3.61, −1.35] percentage points. Each excludes zero, and the BER intervals show the same pattern. Leave-one-source-out checks preserve the directions of all four comparisons. These intervals use fixed noise sources and no multiple-comparison adjustment.
 
 ```matlab
 assert(exist('root','var')==1 && exist('ctx','var')==1,'Run Sections 1–18 in order first.');
@@ -1463,19 +1440,19 @@ disp(groupsummary(bandInputs,{'Kind','Level_dB'},'mean','EnergyRatio'));
              Kind              Level_dB    GroupCount    mean_EnergyRatio
     _______________________    ________    __________    ________________
 
-    "clean"                        0           60                  1     
-    "fixed"                        3          180            0.83367     
-    "fixed"                        6          180            0.75022     
-    "fixed"                       12          180            0.68729     
-    "fixed_level_control"          3          180            0.83367     
-    "fixed_level_control"          6          180            0.75022     
-    "fixed_level_control"         12          180            0.68729     
-    "matched"                      3          180            0.97737     
-    "matched"                      6          180              0.966     
-    "matched"                     12          180            0.95739     
-    "matched_level_control"        3           60            0.97737     
-    "matched_level_control"        6           60              0.966     
-    "matched_level_control"       12           60            0.95739     
+    "clean"                        0           60                  1
+    "fixed"                        3          180            0.83367
+    "fixed"                        6          180            0.75022
+    "fixed"                       12          180            0.68729
+    "fixed_level_control"          3          180            0.83367
+    "fixed_level_control"          6          180            0.75022
+    "fixed_level_control"         12          180            0.68729
+    "matched"                      3          180            0.97737
+    "matched"                      6          180              0.966
+    "matched"                     12          180            0.95739
+    "matched_level_control"        3           60            0.97737
+    "matched_level_control"        6           60              0.966
+    "matched_level_control"       12           60            0.95739
 ```
 
 ```matlab
@@ -1488,24 +1465,24 @@ bandSummary=readtable(fullfile(root,'results','band_intervention_summary.csv'),'
       Kind       Level_dB    BandLow_Hz    BandHigh_Hz    MeanDeltaCos    MeanLevelControlDeltaCos    MeanEffectiveAttenuation_dB
     _________    ________    __________    ___________    ____________    ________________________    ___________________________
 
-    "fixed"          3             0          1000        -0.00064877           -2.3162e-10                           3          
-    "fixed"          3          1000          3000        -0.00045032           -1.7031e-10                           3          
-    "fixed"          3          3000          8000        -0.00080133           -1.8169e-10                           3          
-    "fixed"          6             0          1000         -0.0020593           -3.4139e-10                           6          
-    "fixed"          6          1000          3000         -0.0020395           -1.6433e-10                           6          
-    "fixed"          6          3000          8000         -0.0035732           -1.8319e-10                           6          
-    "fixed"         12             0          1000         -0.0052255            -6.834e-10                          12          
-    "fixed"         12          1000          3000          -0.010349           -1.7299e-10                          12          
-    "fixed"         12          3000          8000          -0.016879           -1.7942e-10                          12          
-    "matched"        3             0          1000         -2.171e-06           -1.7163e-10                     0.15556          
-    "matched"        3          1000          3000         -0.0001014           -1.7163e-10                      1.2065          
-    "matched"        3          3000          8000         -0.0007681           -1.7163e-10                      2.8909          
-    "matched"        6             0          1000        -4.5706e-06           -1.6697e-10                     0.24062          
-    "matched"        6          1000          3000        -0.00040799           -1.6697e-10                       2.176          
-    "matched"        6          3000          8000         -0.0034108           -1.6697e-10                       5.735          
-    "matched"       12             0          1000        -7.0822e-06           -1.6667e-10                     0.30875          
-    "matched"       12          1000          3000          -0.001673           -1.6667e-10                      3.6233          
-    "matched"       12          3000          8000          -0.015865           -1.6667e-10                      11.281          
+    "fixed"          3             0          1000        -0.00064877           -2.3162e-10                           3
+    "fixed"          3          1000          3000        -0.00045032           -1.7031e-10                           3
+    "fixed"          3          3000          8000        -0.00080133           -1.8169e-10                           3
+    "fixed"          6             0          1000         -0.0020593           -3.4139e-10                           6
+    "fixed"          6          1000          3000         -0.0020395           -1.6433e-10                           6
+    "fixed"          6          3000          8000         -0.0035732           -1.8319e-10                           6
+    "fixed"         12             0          1000         -0.0052255            -6.834e-10                          12
+    "fixed"         12          1000          3000          -0.010349           -1.7299e-10                          12
+    "fixed"         12          3000          8000          -0.016879           -1.7942e-10                          12
+    "matched"        3             0          1000         -2.171e-06           -1.7163e-10                     0.15556
+    "matched"        3          1000          3000         -0.0001014           -1.7163e-10                      1.2065
+    "matched"        3          3000          8000         -0.0007681           -1.7163e-10                      2.8909
+    "matched"        6             0          1000        -4.5706e-06           -1.6697e-10                     0.24062
+    "matched"        6          1000          3000        -0.00040799           -1.6697e-10                       2.176
+    "matched"        6          3000          8000         -0.0034108           -1.6697e-10                       5.735
+    "matched"       12             0          1000        -7.0822e-06           -1.6667e-10                     0.30875
+    "matched"       12          1000          3000          -0.001673           -1.6667e-10                      3.6233
+    "matched"       12          3000          8000          -0.015865           -1.6667e-10                      11.281
 ```
 
 ```matlab
@@ -1524,17 +1501,25 @@ end
 bandLegend=legend('Interpreter','none','NumColumns',3,'FontSize',9);bandLegend.Layout.Tile='south';
 ```
 
-![figure_18.png](final_project_preview_media/figure_18.png)
+![MATLAB figure 19](final_project_preview_media/figure_18.png)
 
-Tables 46 and 47 and Figure 19: Clean\-speech band interventions include fixed attenuation, energy\-matched attenuation and their corresponding whole\-signal level controls. The two panels show each intervention with its controls. Nominal dB levels in the energy\-matched design do not imply equal effective band attenuation. Here Δcos is relative to unprocessed clean speech, whereas enhancement Δcos is relative to Noisy. Their magnitudes cannot be directly compared or used to explain enhancement\-related verification errors.
+Tables 46 and 47 and Figure 19: Clean-speech band interventions include fixed attenuation, energy-matched attenuation and their corresponding whole-signal level controls. The two panels show each intervention with its controls. Nominal dB levels in the energy-matched design do not imply equal effective band attenuation. Here Δcos is relative to unprocessed clean speech, whereas enhancement Δcos is relative to Noisy. Their magnitudes cannot be directly compared or used to explain enhancement-related verification errors.
 
-# 25. Supplementary clean\-query verification
+# 25. Supplementary clean-query verification
 
-This supplementary experiment aims to establish a clean\-speech verification baseline and examine whether speech enhancement affects speaker verification performance even without added noise.
+This supplementary experiment aims to establish a clean-speech verification baseline and examine whether speech enhancement affects speaker verification performance even without added noise.
 
 ```matlab
-if exist('ctx','var')==1 && isstruct(ctx) && isfield(ctx,'runRoot')
+if exist('ctx','var')==1 && p_clean_query_context_ready(ctx)
  cleanQueryRoot=p_run_clean_query(ctx);
+```
+
+```matlabTextOutput
+CLEAN_SS_COMPLETE: 90 unique queries, original alpha 1.5 and beta 0.02
+MATLAB_METRICS_VERIFIED maximum difference 0 percentage points
+```
+
+```matlab
 else
  projectRoot=local_project_root(mfilename('fullpath'));
  cleanQueryRoot=fullfile(projectRoot,'results','tables','clean_query');
@@ -1542,11 +1527,44 @@ end
 p_inspect_clean_query(cleanQueryRoot);
 ```
 
-Clean speech achieves an EER of 0%, compared with 0.167% after default spectral subtraction and 0% after DeepFilterNet. However, fixed\-threshold BER increases from 1.25% to 2.00% and 1.50%, respectively. These findings show that speech enhancement can affect speaker verification performance even when no noise is added.
+```matlabTextOutput
+90 unique queries: 60 target and 30 external; 20 unchanged primary enrollment references.
+60 genuine / 600 external trials per clean condition. Fixed threshold 0.270078811669524.
+           Method            EER_pct    FAR_pct    FRR_pct    BER_pct    FalseRejects    FalseAccepts
+    _____________________    _______    _______    _______    _______    ____________    ____________
+
+    "Clean"                        0      2.5         0        1.25           0               15
+    "Clean_SS_a1p5"          0.16667        4         0           2           0               24
+    "Clean_DeepFilterNet"          0        3         0         1.5           0               18
+
+Interface controls, reported separately:
+           Method            EER_pct    FAR_pct    FRR_pct    BER_pct
+    _____________________    _______    _______    _______    _______
+
+    "Clean_Resample_only"       0       2.8333        0       1.4167
+    "Clean_Adapter"             0       2.8333        0       1.4167
+
+Main Noisy run (different trial counts; descriptive context):
+        Method         EER_pct    FAR_pct    FRR_pct    BER_pct    GenuineTrials    ExternalTrials    FalseRejects    FalseAccepts    Threshold
+    _______________    _______    _______    _______    _______    _____________    ______________    ____________    ____________    _________
+
+    "Noisy"            7.0833     1.8333     9.8611     5.8472          720              7200              71             132          0.27008
+    "SS_a1p5"          8.7639     3.1667     12.222     7.6944          720              7200              88             228          0.27008
+    "DeepFilterNet"    9.0278     2.9167     14.444     8.6806          720              7200             104             210          0.27008
+```
+
+![MATLAB figure 20](final_project_preview_media/figure_19.png)
+
+```matlabTextOutput
+EER scans thresholds; FAR/FRR/BER use the unchanged development threshold.
+Zero observed EER does not imply zero error at that fixed threshold or perfect generalisation.
+```
+
+Clean speech achieves an EER of 0%, compared with 0.167% after default spectral subtraction and 0% after DeepFilterNet. However, fixed-threshold BER increases from 1.25% to 2.00% and 1.50%, respectively. These findings show that speech enhancement can affect speaker verification performance even when no noise is added.
 
 # 26. Summary of findings
 
-The first summary table below compares the main systems; the second lists SNR\-specific DeepFilterNet\-minus\-Noisy differences. SI\-SDR, STOI and enhancement Δcos means use 720 enrolled\-speaker test mixtures; verification rates use genuine and external\-impostor trials.
+The first summary table below compares the main systems; the second lists SNR-specific DeepFilterNet-minus-Noisy differences. SI-SDR, STOI and enhancement Δcos means use 720 enrolled-speaker test mixtures; verification rates use genuine and external-impostor trials.
 
 ```matlab
 assert(exist('primary','var')==1 && exist('main','var')==1 && exist('conditional','var')==1 && exist('caseCounts','var')==1,'Run Sections 1–24 in order first.');
@@ -1558,11 +1576,11 @@ disp(primary(ix,{'Method','TargetSI_SDRGain_dB','TargetSTOIChange','ExternalEER_
         Method         TargetSI_SDRGain_dB    TargetSTOIChange    ExternalEER_pct    CommonThresholdBER_pct    CommonThresholdFAR_pct    CommonThresholdFRR_pct    MeanDeltaCos
     _______________    ___________________    ________________    _______________    ______________________    ______________________    ______________________    ____________
 
-    "Noisy"                7.3387e-17           -4.3175e-18           7.0833                 5.8472                    1.8333                    9.8611                     0  
-    "SS_a1p5"                  0.9293             -0.003706           8.7639                 7.6944                    3.1667                    12.222             -0.075473  
-    "SS_a3p0"                  1.3475             -0.011181           9.7222                 9.0278                      3.75                    14.306              -0.10488  
-    "SS_a0p5"                 0.40582            0.00010937           7.3611                 6.5347                    2.5139                    10.556              -0.04116  
-    "DeepFilterNet"             6.258              0.029086           9.0278                 8.6806                    2.9167                    14.444              -0.06468  
+    "Noisy"                7.3387e-17           -4.3175e-18           7.0833                 5.8472                    1.8333                    9.8611                     0
+    "SS_a1p5"                  0.9293             -0.003706           8.7639                 7.6944                    3.1667                    12.222             -0.075473
+    "SS_a3p0"                  1.3475             -0.011181           9.7222                 9.0278                      3.75                    14.306              -0.10488
+    "SS_a0p5"                 0.40582            0.00010937           7.3611                 6.5347                    2.5139                    10.556              -0.04116
+    "DeepFilterNet"             6.258              0.029086           9.0278                 8.6806                    2.9167                    14.444              -0.06468
 ```
 
 ```matlab
@@ -1574,6 +1592,9 @@ disp(primary(ix,{'Method','TargetSI_SDRGain_dB','TargetSTOIChange','ExternalEER_
 
 ```matlabTextOutput
 SS_a1p5: mean SI-SDR gain 0.929 dB, STOI change -0.0037; EER 8.764% versus 7.083% for Noisy.
+```
+
+```matlabTextOutput
 DeepFilterNet: mean SI-SDR gain 6.258 dB, STOI change +0.0291; EER 9.028% versus 7.083% for Noisy.
 ```
 
@@ -1585,21 +1606,36 @@ DeepFilterNet: mean SI-SDR gain 6.258 dB, STOI change +0.0291; EER 9.028% versus
 Relative to Noisy: FAR change +1.333 percentage points; FRR change +2.361 points.
 ```
 
+```matlabTextOutput
+Relative to Noisy: FAR change +1.083 percentage points; FRR change +4.583 points.
+```
+
 ```matlab
  end
  r=conditional(conditional.Method=="DeepFilterNet" & conditional.NoiseClass=="ALL",:);
  n=conditional(conditional.Method=="Noisy" & conditional.NoiseClass=="ALL",:);r=sortrows(r,'InputSNR_dB');n=sortrows(n,'InputSNR_dB');
  disp(table(r.InputSNR_dB,r.EER_pct-n.EER_pct,'VariableNames',{'SNR_dB','DFN_minus_Noisy_EER_pp'}));
+```
+
+```matlabTextOutput
+    SNR_dB    DFN_minus_Noisy_EER_pp
+    ______    ______________________
+
+      -5              2.2222
+       0                 3.5
+       5              2.7222
+      10             0.66667
+```
+
+```matlab
 save(fullfile(ctx.runRoot,'stepwise_completed.mat'),'parameters','root','devRoot','selectionTable','resultSummary','caseCounts','-v7');
 ```
 
-For these models and materials, DeepFilterNet improves SI\-SDR and STOI, while default percentile subtraction improves SI\-SDR but slightly reduces STOI; both have higher verification EER and BER than Noisy. Test EER rises across the five α values. This subtraction finding is specific to the percentile estimator: Tracking\-SS has EER 7.64%, closer to Noisy’s 7.08% than default percentile subtraction’s 8.76%.
+For these models and materials, DeepFilterNet improves SI-SDR and STOI, while default percentile subtraction improves SI-SDR but slightly reduces STOI; both have higher verification EER and BER than Noisy. Test EER rises across the five α values. This subtraction finding is specific to the percentile estimator: Tracking-SS has EER 7.64%, closer to Noisy’s 7.08% than default percentile subtraction’s 8.76%.
 
+DeepFilterNet places 64.4% of mixtures in class B, with improved SI-SDR but reduced clean-reference similarity. The verification test uses utterances from 20 enrolled and 10 unenrolled speakers, with nine noise sources; intervals are not adjusted for multiple comparisons. Band analyses do not establish the cause of poorer verification.
 
-DeepFilterNet places 64.4% of mixtures in class B, with improved SI\-SDR but reduced clean\-reference similarity. The verification test uses utterances from 20 enrolled and 10 unenrolled speakers, with nine noise sources; intervals are not adjusted for multiple comparisons. Band analyses do not establish the cause of poorer verification.
-
-
-The supplementary clean\-query experiment shows that enhancement can also affect verification performance without added noise. Although DeepFilterNet maintains an EER of 0%, fixed\-threshold BER increases from 1.25% to 1.50%. Default spectral subtraction also increases EER from 0% to 0.167% and BER from 1.25% to 2.00%.
+The supplementary clean-query experiment shows that enhancement can also affect verification performance without added noise. Although DeepFilterNet maintains an EER of 0%, fixed-threshold BER increases from 1.25% to 1.50%. Default spectral subtraction also increases EER from 0% to 0.167% and BER from 1.25% to 2.00%.
 
 # Appendix — Local MATLAB Functions
 
@@ -1633,11 +1669,18 @@ end
 function ctx=local_context(root,language)
 assert(exist('hann','file')>0,'Signal Processing Toolbox is required.');
 assert(exist('stoi','file')>0,'Audio Toolbox is required.');
-settings=jsondecode(fileread(fullfile(root,'runtime.local.json')));
+runtimePath=fullfile(root,'runtime.local.json');
+assert(isfile(runtimePath),'ELEC5305:MissingRuntimeConfig', ...
+ 'Missing local runtime configuration. Copy runtime.local.example.json to runtime.local.json and set python, materials_root and tools_root for this computer. Keep runtime.local.json private.');
+settings=jsondecode(fileread(runtimePath));
+assert(isstruct(settings) && isscalar(settings) && all(isfield(settings,{'python','materials_root','tools_root'})), ...
+ 'runtime.local.json must contain python, materials_root and tools_root.');
 ctx=struct('projectRoot',root,'language',language);
 ctx.python=local_setting(settings,'python','ELEC5305_PYTHON','python3',root);
 ctx.materialsRoot=local_setting(settings,'materials_root','ELEC5305_MATERIALS',fullfile('data','materials'),root);
-assert(isfolder(ctx.materialsRoot),'Set materials_root in runtime.local.json.');
+assert(isfolder(ctx.materialsRoot),'Set materials_root in runtime.local.json to the local material_audit/noise_audit parent.');
+ctx.toolsRoot=local_setting(settings,'tools_root','ELEC5305_TOOLS','tools',root);
+assert(isfolder(ctx.toolsRoot),'Set tools_root in runtime.local.json to the local DeepFilterNet/ECAPA/VOICEBOX tools directory.');
 ctx.parameters=jsondecode(fileread(fullfile(root,'protocol','test_config.json')));
 ctx.analysis=jsondecode(fileread(fullfile(root,'protocol','analysis_rules.json')));
 parent=fullfile(root,'runs');if ~isfolder(parent),mkdir(parent);end
@@ -2297,17 +2340,37 @@ x=x-mean(x);y=y-mean(y);t=x*((x'*y)/(x'*x));v=10*log10(max(sum(t.^2),realmin)/ma
 end
 
 function cleanRoot=p_run_clean_query(ctx)
-% Fresh supplemental inference for the current main run; never retune choices.
-assert(isfile(fullfile(ctx.runRoot,'test','external','embeddings.npz')), ...
- 'Run the main development/test sections first, or clear ctx to inspect recorded clean results.');
-assert(isfile(fullfile(ctx.runRoot,'development','results','development_selection.csv')));
-[~,tag]=fileparts(tempname(ctx.runRoot));
-cleanRoot=fullfile(ctx.runRoot,['clean_query_' tag]);
-p_run_python(ctx,fullfile('clean_query','prepare_supplement.py'), ...
- '--project',ctx.projectRoot,'--run',ctx.runRoot,'--output',cleanRoot);
+% Resume only the matching current run; fresh Run All has a fresh ctx.runRoot.
+assert(p_clean_query_context_ready(ctx), ...
+ 'The main development/test results are not complete. Run Section 25 without ctx to inspect recorded results.');
+cleanRoot='';
+candidates=dir(fullfile(ctx.runRoot,'clean_query_*'));
+[~,order]=sort([candidates.datenum],'descend');
+for k=order
+ candidate=fullfile(candidates(k).folder,candidates(k).name);
+ provenance=fullfile(candidate,'provenance.json');
+ if ~candidates(k).isdir || ~isfile(provenance),continue;end
+ prior=jsondecode(fileread(provenance));
+ if strcmp(prior.source_run,ctx.runRoot) && isfile(fullfile(candidate,'clean_manifest.csv')) && isfile(fullfile(candidate,'dsp','base_clip_index.csv'))
+  cleanRoot=candidate;break;
+ end
+end
+if isempty(cleanRoot)
+ [~,tag]=fileparts(tempname(ctx.runRoot));cleanRoot=fullfile(ctx.runRoot,['clean_query_' tag]);
+ p_run_python(ctx,fullfile('clean_query','prepare_supplement.py'), ...
+  '--project',ctx.projectRoot,'--run',ctx.runRoot,'--output',cleanRoot);
+end
 p_prepare_clean_query_ss(cleanRoot);
-p_run_python(ctx,'run_deepfilter.py',cleanRoot);
-p_run_python(ctx,'extract_embeddings.py',cleanRoot);
+external=fullfile(cleanRoot,'external');
+if ~isfile(fullfile(external,'complete_clip_index.csv'))
+ if isfolder(external)
+  [~,tag]=fileparts(tempname(cleanRoot));movefile(external,fullfile(cleanRoot,['external_incomplete_' tag]));
+ end
+ p_run_python(ctx,'run_deepfilter.py',cleanRoot);
+end
+if ~isfile(fullfile(external,'embeddings.npz')) || ~isfile(fullfile(external,'ecapa_audit.json'))
+ p_run_python(ctx,'extract_embeddings.py',cleanRoot);
+end
 p_run_python(ctx,fullfile('clean_query','analyze_clean.py'),'--root',cleanRoot);
 p_check_clean_query_metrics(cleanRoot);
 save(fullfile(ctx.runRoot,'clean_query_completed.mat'),'cleanRoot','-v7');
@@ -2316,8 +2379,8 @@ end
 function p_prepare_clean_query_ss(root)
 % Exact original MATLAB DSP helpers, applied to unique pre-mixture clean crops.
 c=jsondecode(fileread(fullfile(root,'test_config.json')));cfg=c.cfg;assert(cfg.alpha==1.5 && cfg.beta==.02);
-M=readtable(fullfile(root,'clean_manifest.csv'),'TextType','string','VariableNamingRule','preserve');
-C=readtable(fullfile(root,'dsp','base_clip_index.csv'),'TextType','string','VariableNamingRule','preserve');
+M=readtable(fullfile(root,'clean_manifest.csv'),'Delimiter',',','ReadVariableNames',true,'TextType','string','VariableNamingRule','preserve');
+C=readtable(fullfile(root,'dsp','base_clip_index.csv'),'Delimiter',',','ReadVariableNames',true,'TextType','string','VariableNamingRule','preserve');
 Q=M(M.RecordingRole=="test",:);assert(height(Q)==90);
 extra=C([],:);diag=struct([]);
 for i=1:height(Q)
@@ -2358,7 +2421,7 @@ end
 
 function p_inspect_clean_query(dataFolder)
 % Display and independently recompute metrics from the recorded trial scores.
-T=readtable(fullfile(dataFolder,'clean_query_summary.csv'),'TextType','string');
+T=readtable(fullfile(dataFolder,'clean_query_summary.csv'),'Delimiter',',','ReadVariableNames',true,'TextType','string');
 M=load(fullfile(dataFolder,'metric_check.mat'));
 actual=zeros(size(M.expected));
 for k=1:size(M.scores,2)
@@ -2372,7 +2435,7 @@ disp(T(1:3,{'Method','EER_pct','FAR_pct','FRR_pct','BER_pct','FalseRejects','Fal
 fprintf('Interface controls, reported separately:\n');
 disp(T(4:5,{'Method','EER_pct','FAR_pct','FRR_pct','BER_pct'}));
 fprintf('Main Noisy run (different trial counts; descriptive context):\n');
-N=readtable(fullfile(dataFolder,'main_run_reproduced.csv'),'TextType','string');disp(N);
+N=readtable(fullfile(dataFolder,'main_run_reproduced.csv'),'Delimiter',',','ReadVariableNames',true,'TextType','string');disp(N);
 figure('Color','w','Position',[100 100 1100 450]);tiledlayout(1,2,'TileSpacing','compact');
 labels=["Clean","Clean to default SS","Clean to DeepFilterNet"];
 for group=1:2
@@ -2389,6 +2452,25 @@ for group=1:2
 end
 fprintf('EER scans thresholds; FAR/FRR/BER use the unchanged development threshold.\n');
 fprintf('Zero observed EER does not imply zero error at that fixed threshold or perfect generalisation.\n');
+end
+
+
+function ready=p_clean_query_context_ready(ctx)
+% A leftover context is not proof that development/test inference completed.
+ready=false;
+if ~isstruct(ctx) || ~isscalar(ctx) || ~all(isfield(ctx,{'runRoot','projectRoot','python'})),return;end
+for field={'runRoot','projectRoot','python'}
+ value=ctx.(field{1});
+ if ~((ischar(value) && isrow(value)) || (isstring(value) && isscalar(value))),return;end
+ if strlength(string(value))==0,return;end
+end
+required={fullfile(ctx.runRoot,'test','external','embeddings.npz'), ...
+ fullfile(ctx.runRoot,'test','external','complete_clip_index.csv'), ...
+ fullfile(ctx.runRoot,'test','inputs','clean_index.csv'), ...
+ fullfile(ctx.runRoot,'test','inputs','test_conditions.csv'), ...
+ fullfile(ctx.runRoot,'development','results','development_selection.csv'), ...
+ fullfile(ctx.projectRoot,'src','scripts','clean_query','prepare_supplement.py')};
+ready=all(cellfun(@isfile,required));
 end
 
 ```
