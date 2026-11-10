@@ -1,0 +1,26 @@
+{
+  "input_sha256": "7eb4f1a444f7da523fdb874953a785dae299e089b6438208da829fd91a208027",
+  "output_sha256": "76bda1c245a02e58aee768a434b30fa780305cfffe341c1ffedf072c667289e4",
+  "section_order": [
+    "24. Intervals, alternative enrollment, source omission and band interventions",
+    "25. Supplementary clean-query verification",
+    "26. Summary of findings",
+    "Appendix \u2014 Local MATLAB Functions"
+  ],
+  "sections_1_to_24_byte_preserved": true,
+  "original_summary_calculation_code_byte_preserved": true,
+  "supplement_calculation_code_byte_preserved": true,
+  "all_saved_output_payloads_preserved": true,
+  "original_summary_output_records": 6,
+  "supplement_output_records": 2,
+  "figures_before": 20,
+  "figures_after": 20,
+  "line_rebase": {
+    "code_lines_before_old_summary": 461,
+    "summary_lines": 13,
+    "supplement_lines": 5
+  },
+  "new_summary_text": "The supplementary clean-query check leaves DeepFilterNet EER at zero while increasing fixed-threshold BER from 1.250% to 1.500%. This smaller trial set provides descriptive context for the noisy-query results and does not identify the cause of their error increase.",
+  "experiment_recomputed": false,
+  "original_final_project_mlx_modified": false
+}

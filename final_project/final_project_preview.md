@@ -1528,9 +1528,25 @@ bandLegend=legend('Interpreter','none','NumColumns',3,'FontSize',9);bandLegend.L
 
 Tables 46 and 47 and Figure 19: Clean\-speech band interventions include fixed attenuation, energy\-matched attenuation and their corresponding whole\-signal level controls. The two panels show each intervention with its controls. Nominal dB levels in the energy\-matched design do not imply equal effective band attenuation. Here Δcos is relative to unprocessed clean speech, whereas enhancement Δcos is relative to Noisy. Their magnitudes cannot be directly compared or used to explain enhancement\-related verification errors.
 
-# 25. Summary of findings
+# 25. Supplementary clean\-query verification
 
-Table 48 summarizes the main systems; Table 49 lists SNR\-specific DeepFilterNet\-minus\-Noisy differences. SI\-SDR, STOI and enhancement Δcos means use 720 enrolled\-speaker test mixtures; verification rates use genuine and external\-impostor trials.
+This supplementary experiment aims to establish a clean\-speech verification baseline and examine whether speech enhancement affects speaker verification performance even without added noise.
+
+```matlab
+if exist('ctx','var')==1 && isstruct(ctx) && isfield(ctx,'runRoot')
+ cleanQueryRoot=p_run_clean_query(ctx);
+else
+ projectRoot=local_project_root(mfilename('fullpath'));
+ cleanQueryRoot=fullfile(projectRoot,'results','tables','clean_query');
+end
+p_inspect_clean_query(cleanQueryRoot);
+```
+
+Clean speech achieves an EER of 0%, compared with 0.167% after default spectral subtraction and 0% after DeepFilterNet. However, fixed\-threshold BER increases from 1.25% to 2.00% and 1.50%, respectively. These findings show that speech enhancement can affect speaker verification performance even when no noise is added.
+
+# 26. Summary of findings
+
+The first summary table below compares the main systems; the second lists SNR\-specific DeepFilterNet\-minus\-Noisy differences. SI\-SDR, STOI and enhancement Δcos means use 720 enrolled\-speaker test mixtures; verification rates use genuine and external\-impostor trials.
 
 ```matlab
 assert(exist('primary','var')==1 && exist('main','var')==1 && exist('conditional','var')==1 && exist('caseCounts','var')==1,'Run Sections 1–24 in order first.');
@@ -1554,38 +1570,36 @@ disp(primary(ix,{'Method','TargetSI_SDRGain_dB','TargetSTOIChange','ExternalEER_
  for method=["SS_a1p5","DeepFilterNet"]
   r=primary(primary.Method==method,:);
   fprintf('%s: mean SI-SDR gain %.3f dB, STOI change %+.4f; EER %.3f%% versus %.3f%% for Noisy.\n',method,r.TargetSI_SDRGain_dB,r.TargetSTOIChange,r.ExternalEER_pct,base.ExternalEER_pct);
-  fprintf('Relative to Noisy: FAR change %+.3f percentage points; FRR change %+.3f points.\n',r.CommonThresholdFAR_pct-base.CommonThresholdFAR_pct,r.CommonThresholdFRR_pct-base.CommonThresholdFRR_pct);
- end
 ```
 
 ```matlabTextOutput
 SS_a1p5: mean SI-SDR gain 0.929 dB, STOI change -0.0037; EER 8.764% versus 7.083% for Noisy.
-Relative to Noisy: FAR change +1.333 percentage points; FRR change +2.361 points.
 DeepFilterNet: mean SI-SDR gain 6.258 dB, STOI change +0.0291; EER 9.028% versus 7.083% for Noisy.
-Relative to Noisy: FAR change +1.083 percentage points; FRR change +4.583 points.
 ```
 
 ```matlab
- r=conditional(conditional.Method=="DeepFilterNet" & conditional.NoiseClass=="ALL",:);
- n=conditional(conditional.Method=="Noisy" & conditional.NoiseClass=="ALL",:);r=sortrows(r,'InputSNR_dB');n=sortrows(n,'InputSNR_dB');
- disp(table(r.InputSNR_dB,r.EER_pct-n.EER_pct,'VariableNames',{'SNR_dB','DFN_minus_Noisy_EER_pp'}));
+  fprintf('Relative to Noisy: FAR change %+.3f percentage points; FRR change %+.3f points.\n',r.CommonThresholdFAR_pct-base.CommonThresholdFAR_pct,r.CommonThresholdFRR_pct-base.CommonThresholdFRR_pct);
 ```
 
 ```matlabTextOutput
-    SNR_dB    DFN_minus_Noisy_EER_pp
-    ______    ______________________
-
-      -5              2.2222        
-       0                 3.5        
-       5              2.7222        
-      10             0.66667        
+Relative to Noisy: FAR change +1.333 percentage points; FRR change +2.361 points.
 ```
 
 ```matlab
+ end
+ r=conditional(conditional.Method=="DeepFilterNet" & conditional.NoiseClass=="ALL",:);
+ n=conditional(conditional.Method=="Noisy" & conditional.NoiseClass=="ALL",:);r=sortrows(r,'InputSNR_dB');n=sortrows(n,'InputSNR_dB');
+ disp(table(r.InputSNR_dB,r.EER_pct-n.EER_pct,'VariableNames',{'SNR_dB','DFN_minus_Noisy_EER_pp'}));
 save(fullfile(ctx.runRoot,'stepwise_completed.mat'),'parameters','root','devRoot','selectionTable','resultSummary','caseCounts','-v7');
 ```
 
-For these models and materials, DeepFilterNet improves SI\-SDR and STOI, while default percentile subtraction improves SI\-SDR but slightly reduces STOI; both have higher verification EER and BER than Noisy. Test EER rises across the five α values. This subtraction finding is specific to the percentile estimator: Tracking\_SS has EER 7.64%, closer to Noisy’s 7.08% than default percentile subtraction’s 8.76%. DeepFilterNet places 64.4% of mixtures in class B, with improved SI\-SDR but reduced clean\-reference similarity. The verification test uses utterances from 20 enrolled and 10 unenrolled speakers, with nine noise sources; intervals are not adjusted for multiple comparisons. Band analyses do not establish the cause of poorer verification.
+For these models and materials, DeepFilterNet improves SI\-SDR and STOI, while default percentile subtraction improves SI\-SDR but slightly reduces STOI; both have higher verification EER and BER than Noisy. Test EER rises across the five α values. This subtraction finding is specific to the percentile estimator: Tracking\-SS has EER 7.64%, closer to Noisy’s 7.08% than default percentile subtraction’s 8.76%.
+
+
+DeepFilterNet places 64.4% of mixtures in class B, with improved SI\-SDR but reduced clean\-reference similarity. The verification test uses utterances from 20 enrolled and 10 unenrolled speakers, with nine noise sources; intervals are not adjusted for multiple comparisons. Band analyses do not establish the cause of poorer verification.
+
+
+The supplementary clean\-query experiment shows that enhancement can also affect verification performance without added noise. Although DeepFilterNet maintains an EER of 0%, fixed\-threshold BER increases from 1.25% to 1.50%. Default spectral subtraction also increases EER from 0% to 0.167% and BER from 1.25% to 2.00%.
 
 # Appendix — Local MATLAB Functions
 
@@ -2280,6 +2294,101 @@ fid=fopen(fullfile(root,'dsp','voicebox_audit.json'),'w');fprintf(fid,'%s',jsone
 end
 function v=sdr(x,y)
 x=x-mean(x);y=y-mean(y);t=x*((x'*y)/(x'*x));v=10*log10(max(sum(t.^2),realmin)/max(sum((y-t).^2),realmin));
+end
+
+function cleanRoot=p_run_clean_query(ctx)
+% Fresh supplemental inference for the current main run; never retune choices.
+assert(isfile(fullfile(ctx.runRoot,'test','external','embeddings.npz')), ...
+ 'Run the main development/test sections first, or clear ctx to inspect recorded clean results.');
+assert(isfile(fullfile(ctx.runRoot,'development','results','development_selection.csv')));
+[~,tag]=fileparts(tempname(ctx.runRoot));
+cleanRoot=fullfile(ctx.runRoot,['clean_query_' tag]);
+p_run_python(ctx,fullfile('clean_query','prepare_supplement.py'), ...
+ '--project',ctx.projectRoot,'--run',ctx.runRoot,'--output',cleanRoot);
+p_prepare_clean_query_ss(cleanRoot);
+p_run_python(ctx,'run_deepfilter.py',cleanRoot);
+p_run_python(ctx,'extract_embeddings.py',cleanRoot);
+p_run_python(ctx,fullfile('clean_query','analyze_clean.py'),'--root',cleanRoot);
+p_check_clean_query_metrics(cleanRoot);
+save(fullfile(ctx.runRoot,'clean_query_completed.mat'),'cleanRoot','-v7');
+end
+
+function p_prepare_clean_query_ss(root)
+% Exact original MATLAB DSP helpers, applied to unique pre-mixture clean crops.
+c=jsondecode(fileread(fullfile(root,'test_config.json')));cfg=c.cfg;assert(cfg.alpha==1.5 && cfg.beta==.02);
+M=readtable(fullfile(root,'clean_manifest.csv'),'TextType','string','VariableNamingRule','preserve');
+C=readtable(fullfile(root,'dsp','base_clip_index.csv'),'TextType','string','VariableNamingRule','preserve');
+Q=M(M.RecordingRole=="test",:);assert(height(Q)==90);
+extra=C([],:);diag=struct([]);
+for i=1:height(Q)
+ r=Q(i,:);[x,sr]=audioread(r.CleanPath);assert(sr==16000 && numel(x)==80000);
+ [Y,meta]=p_stft(x,cfg);[PSD,info]=p_noise_psd(Y,meta,sr,cfg,'percentile');
+ G=p_spectral_gain(Y,PSD,cfg);z=p_istft(G.*Y,meta);
+ gain=c.export_headroom/max(1,max([abs(x);abs(z)]));
+ assert(abs(gain-double(r.ExportGain))<1e-12,'Clean/SS shared gain differs from existing clean export.');
+ id="cleanprobe_"+r.UtteranceID+"_SS_a1p5";dest=fullfile(root,'dsp','audio16k',id+".wav");
+ audiowrite(dest,gain*z,sr,'BitsPerSample',24);
+ row=C(C.UtteranceID==r.UtteranceID,:);assert(height(row)==1);
+ row.ClipID=id;row.Method="SS_a1p5";row.Path=string(dest);extra=[extra;row]; %#ok<AGROW>
+ [cleanExport,~]=audioread(r.ECAPAInputPath);assert(max(abs(cleanExport-gain*x))<=2^-23+eps);
+ residual=p_istft(Y,meta)-x;
+ energyRatio=sum(z.^2)/sum(x.^2);
+ diag=[diag;struct('UtteranceID',r.UtteranceID,'ParticipantRole',r.ParticipantRole, ...
+  'ExportGain',gain,'SelectedFrames',nnz(info.selected),'CleanInputPeak',max(abs(x)), ...
+  'OutputEnergyRatio',energyRatio,'MeanPowerGain',mean(G(:).^2), ...
+  'STFTRelativeError',norm(residual)/norm(x))]; %#ok<AGROW>
+end
+writetable([C;extra],fullfile(root,'dsp','clip_index.csv'));
+writetable(struct2table(diag),fullfile(root,'dsp','clean_ss_diagnostics.csv'));
+fprintf('CLEAN_SS_COMPLETE: %d unique queries, original alpha %.1f and beta %.2f\n',height(Q),cfg.alpha,cfg.beta);
+end
+
+function p_check_clean_query_metrics(root)
+a=load(fullfile(root,'metric_check.mat'));actual=zeros(size(a.expected));
+for i=1:size(a.scores,2)
+ m=p_verification_metrics(a.scores(:,i),a.genuine,a.threshold);
+ actual(i,:)=100*[m.EER m.FAR m.FRR m.BER];
+end
+maxError=max(abs(actual-a.expected),[],'all');assert(maxError<1e-10);
+fid=fopen(fullfile(root,'matlab_validation.json'),'w');fprintf(fid,'%s',jsonencode(struct( ...
+ 'OriginalMATLABMetricFunctionUsed',true,'Methods',size(actual,1), ...
+ 'MaximumPythonMATLABDifferencePercentagePoints',maxError,'Passed',true),PrettyPrint=true));fclose(fid);
+fprintf('MATLAB_METRICS_VERIFIED maximum difference %.3g percentage points\n',maxError);
+end
+
+function p_inspect_clean_query(dataFolder)
+% Display and independently recompute metrics from the recorded trial scores.
+T=readtable(fullfile(dataFolder,'clean_query_summary.csv'),'TextType','string');
+M=load(fullfile(dataFolder,'metric_check.mat'));
+actual=zeros(size(M.expected));
+for k=1:size(M.scores,2)
+ v=p_verification_metrics(M.scores(:,k),M.genuine,M.threshold);
+ actual(k,:)=100*[v.EER v.FAR v.FRR v.BER];
+end
+assert(max(abs(actual-M.expected),[],'all')<1e-10,'Metric cross-check failed.');
+fprintf('90 unique queries: 60 target and 30 external; 20 unchanged primary enrollment references.\n');
+fprintf('60 genuine / 600 external trials per clean condition. Fixed threshold %.15f.\n',M.threshold);
+disp(T(1:3,{'Method','EER_pct','FAR_pct','FRR_pct','BER_pct','FalseRejects','FalseAccepts'}));
+fprintf('Interface controls, reported separately:\n');
+disp(T(4:5,{'Method','EER_pct','FAR_pct','FRR_pct','BER_pct'}));
+fprintf('Main Noisy run (different trial counts; descriptive context):\n');
+N=readtable(fullfile(dataFolder,'main_run_reproduced.csv'),'TextType','string');disp(N);
+figure('Color','w','Position',[100 100 1100 450]);tiledlayout(1,2,'TileSpacing','compact');
+labels=["Clean","Clean to default SS","Clean to DeepFilterNet"];
+for group=1:2
+ nexttile;hold on;
+ if group==1,mask=logical(M.genuine);name='Genuine scores (60 trials)';else,mask=~logical(M.genuine);name='External-impostor scores (600 trials)';end
+ edges=linspace(-.3,1,53);peakHeight=0;
+ for k=1:3
+  bins=histcounts(M.scores(mask,k),edges,'Normalization','probability');peakHeight=max(peakHeight,max(bins));
+  histogram(M.scores(mask,k),edges,'Normalization','probability','DisplayStyle','stairs','LineWidth',1.6,'DisplayName',labels(k));
+ end
+ ylim([0,max(.01,1.12*peakHeight)]);xlim([-.3,1]);
+ xline(M.threshold,'k--','DisplayName','Fixed development threshold');
+ xlabel('Cosine similarity');ylabel('Proportion');title(name);grid on;legend('Location','best');
+end
+fprintf('EER scans thresholds; FAR/FRR/BER use the unchanged development threshold.\n');
+fprintf('Zero observed EER does not imply zero error at that fixed threshold or perfect generalisation.\n');
 end
 
 ```

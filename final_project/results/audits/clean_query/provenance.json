@@ -1,0 +1,15 @@
+{
+  "source_project": "/Users/zhangchenxin/Documents/ELEC5305/final_project/final project",
+  "source_run": "/Users/zhangchenxin/Documents/ELEC5305/final_project/final project/runs/experiment_en_tp498abfc3_ace1_447e_96e9_2010c85be3ff",
+  "source_mlx_sha256": "b3f6b9d4ad666a72c60483b63656a3832a48beae511aceb793470080c25fb8a4",
+  "source_embeddings_sha256": "583d60e1cc683d19aef2f8dbddda19c6895c647f599cf4d5165e3f68cfcd86b6",
+  "helpers_from_current_mlx": {
+    "p_stft": "72a3451626f75d01bc049ba0858c4daf1763c7dba505e2d11388c0d78c6a2c27",
+    "p_istft": "fef84c5dd78d0a6eec71caabbfe3f4dd1dfe8c09e10d1603187f48fa7fe2bfe0",
+    "p_noise_psd": "8309b3323c7986248401ee382e11d6e9a89a2dec203a16a37b950aabd62d2ccf",
+    "p_spectral_gain": "8817ad9c9ea051d3b0373c70998cbbc4151f7810fa1ecc48f3d6c31b4a0c83e5",
+    "p_verification_metrics": "792c4f243980427d4872eb4887318daa7025798e207962ff10d8b2918144be5e"
+  },
+  "protocol": "90 unique clean test queries; 20 unchanged primary enrollment; no threshold retuning; main-run noisy test not modified",
+  "query_processing": "Use exact pre-mixture 5 s FLOAT crops (peak 0.7); original common export gain and PCM24. Baseline input identical by SHA256 to clean files already embedded in main run. SS receives only its input speech, no oracle noise PSD."
+}

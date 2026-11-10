@@ -1,0 +1,24 @@
+% Supplementary result; insert after the main result discussion.
+% This file uses booktabs, already present in the existing report.
+\subsection{Clean-query verification reference}
+We add a supplementary reference using 60 unique clean target queries and 30 unique clean external queries from the test split. The queries retain the original five-second, 16~kHz crops and export processing. We keep the 20 primary enrollment recordings, ECAPA model and Noisy-development threshold of 0.270078811669524 unchanged. Default SS uses its original percentile estimator with $\alpha=1.5$ and $\beta=0.02$, without an oracle zero-noise spectrum. We also process the clean queries through the unchanged DeepFilterNet pipeline.
+
+\begin{table}[t]
+\caption{Supplementary clean-query verification. Each row uses 60 genuine and 600 external-impostor trials. EER uses the original threshold-sweep definition; FAR, FRR and BER use the fixed Noisy-development threshold. The smaller query set and its different condition weighting limit comparison with the pooled noisy results.}
+\label{tab:cleanquery}
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrr}
+\toprule
+Processing & EER (\%) & FAR (\%) & FRR (\%) & BER (\%)\\
+\midrule
+Unprocessed & 0.000 & 2.500 & 0.000 & 1.250\\
+Default SS & 0.167 & 4.000 & 0.000 & 2.000\\
+DeepFilterNet & 0.000 & 3.000 & 0.000 & 1.500\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The unprocessed clean queries give an observed EER of 0.000\% (Table~\ref{tab:cleanquery}). The main Noisy EER of 7.083\% exceeds this reference by 7.083 percentage points. This descriptive comparison uses fewer clean trials and does not carry a new confidence interval. At the fixed threshold, the clean reference still gives 15 false accepts among 600 external trials, despite its zero observed EER. Default SS gives 24 false accepts and DeepFilterNet gives 18; all three conditions reject none of the 60 genuine trials.
+
+DeepFilterNet leaves the observed clean EER at zero and raises fixed-threshold BER by 0.250 percentage points. The resampling-only control converts clean queries from 16 to 48 and back to 16~kHz. The adapter control adds 16-bit pulse-code modulation (PCM16) conversion at 48~kHz before returning to 16~kHz. Both controls bypass enhancement; each gives EER 0.000\% and BER 1.417\%. These finite-sample results do not isolate the cause of DeepFilterNet's larger error increase on noisy queries.

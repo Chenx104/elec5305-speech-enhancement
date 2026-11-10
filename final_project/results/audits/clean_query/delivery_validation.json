@@ -1,0 +1,10 @@
+{
+  "original_mlx_sha256": "b3f6b9d4ad666a72c60483b63656a3832a48beae511aceb793470080c25fb8a4",
+  "original_mlx_unchanged": true,
+  "original_document_recovered_byte_for_byte": true,
+  "original_output_recovered_byte_for_byte": true,
+  "original_figures": 19,
+  "augmented_figures": 20,
+  "saved_display_source": "actual MATLAB render_supplement / Inspect_Clean_Query execution; embedded into Live Script without rerunning main experiment",
+  "headless_live_editor_limitation": "executeAndSave could not initialize the editor; numerical code and native figures executed successfully as MATLAB functions, metrics checked independently."
+}

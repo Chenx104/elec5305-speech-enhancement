@@ -1,6 +1,6 @@
 # Code and data provenance
 
-The final manual experiment entry point is `final_project.mlx`. It contains all 25 experimental sections and the student-developed MATLAB functions in its final appendix. These implement STFT analysis, weighted overlap-add reconstruction, percentile and simplified VAD noise estimation, spectral subtraction, conditional speech/noise decomposition, development selection, scoring and statistical analysis. Python adapters and deterministic material preparation remain in `src/scripts` and `src/materials`.
+The final manual experiment entry point is `final_project.mlx`. It contains all 26 experimental sections and the student-developed MATLAB functions in its final appendix. These implement STFT analysis, weighted overlap-add reconstruction, percentile and simplified VAD noise estimation, spectral subtraction, conditional speech/noise decomposition, development selection, scoring and statistical analysis. Python adapters and deterministic material preparation remain in `src/scripts` and `src/materials`.
 
 VOICEBOX supplies minimum-statistics tracking and an implementation comparison. DeepFilterNet3 and SpeechBrain ECAPA are external pretrained models; neither is trained or fine-tuned here. They are not student-developed models. See `THIRD_PARTY_NOTICES.md` and `DATA_AND_MODELS.md` for sources and fixed dependencies.
 
@@ -11,3 +11,7 @@ Some report plotting inputs duplicate canonical tables under `results/tables`. T
 The portable noise manifest's descriptive Path column is relative to the materials root. All scientific IDs, samples, seeds, crop times and model/sample hashes are preserved. Original archive identifiers remain in `protocol/upstream_identifiers.json`. Historical package hash manifests were archived because their old filenames no longer describe this completed submission.
 
 No source audio or model weights are included in the upload file set. The complete local `runs/` directory is retained in place to preserve its original absolute references, but is excluded by `.gitignore` and is not an upload artifact. Private runtime configuration is archived outside the submission directory; create it locally from the example before a new full execution. Report provenance and any required assistance disclosure remain separate student deliverables.
+
+## Integrated clean-query check
+
+Section 25 adds a clean-query reference and clean-input enhancement checks; Section 26 retains the main-result summary. The main Live Script contains the supplementary orchestration and MATLAB preparation, checks and display as local functions. Python entry points are in `src/scripts/clean_query`; standalone MATLAB reproduction helpers are in `src/matlab/clean_query`. Recorded scores and metrics are in `results/tables/clean_query`, and audit/provenance records are in `results/audits/clean_query`. Historical provenance JSON retains the hashes and paths of the inputs used when those results were produced. The merge receipt records the archived earlier files and the installed current paths.

@@ -6,11 +6,13 @@ Chenxin Zhang · ELEC5305 Speech and Audio Processing · University of Sydney
 
 This project investigates why improvements in speech enhancement do not always translate into better speaker verification. It combines student-developed MATLAB spectral subtraction, pretrained DeepFilterNet3, and a fixed SpeechBrain ECAPA-TDNN verifier to examine how signal quality, subtraction strength and noise conditions relate to speaker identity.
 
+The main experiment has been executed, and its formal results have been checked against the final report. The added clean-query experiment has also been recomputed and independently checked. **[final_project.mlx](final_project.mlx) is the single main Run All entry point**, with saved outputs and English analysis throughout its 26 sections.
+
 ## Implementation and experiment
 
 The student-developed MATLAB code implements STFT analysis, weighted overlap-add reconstruction, percentile and simplified VAD noise estimation, power-domain spectral subtraction, and speech/noise component decomposition. Analysis uses 16 kHz audio, a 32 ms periodic Hann window, an 8 ms hop and a 1024-point FFT. The default subtraction strength is α=1.5 and the power floor is β=0.02.
 
-All 39 MATLAB local functions are in the notebook's final appendix. Python scripts prepare the fixed inputs and call the external models. VOICEBOX supplies the tracking noise estimator and an implementation comparison. DeepFilterNet3 and ECAPA are used without training or fine-tuning; ECAPA produces 192-dimensional embeddings for cosine scoring.
+The MATLAB local functions are in the notebook's final appendix. Python scripts prepare the fixed inputs and call the external models. VOICEBOX supplies the tracking noise estimator and an implementation comparison. DeepFilterNet3 and ECAPA are used without training or fine-tuning; ECAPA produces 192-dimensional embeddings for cosine scoring.
 
 Development contains **624 mixtures**. The formal test contains **1080 mixtures**, using 20 enrolled speakers, 10 external test speakers, nine noise sources and SNRs of −5, 0, 5 and 10 dB. The noise groups are relatively low-variation environments, high-variation environments and four-reader babble. Development and testing use separate source recordings, noise sources and external-speaker groups; the enrolled speakers are shared.
 
@@ -31,25 +33,19 @@ Development selected **α=3** for mean SI-SDR gain and **α=0.5** for external-v
 
 See the [test summary](results/tables/test/test_summary.csv), [development selection](results/tables/development/development_selection.csv), [primary comparisons](results/tables/test/primary_comparisons.csv) and [α analysis figure](results/figures/alpha_analysis.pdf).
 
-## Browse the MATLAB Experiment
-
-- [View the experiment code and saved outputs online](final_project_preview.md)
-- [Download the executable MATLAB Live Script](final_project.mlx)
-
 ## Repository structure
 
 ```text
 final_project.mlx              Complete stepwise experiment and local MATLAB functions
-Inspect_Results.m              Read included formal results and display EER
 src/scripts/                   Batch input preparation and external-model adapters
 src/materials/                 Deterministic data preparation scripts
-src/matlab/README.md            Directory layout retained for the Python initializer
+src/matlab/                    MATLAB layout and standalone clean-query reproduction helpers
 protocol/                      Fixed settings, manifests, model identities and requirements
 runtime.local.example.json     Template for private local configuration
 results/tables/development/    Development metrics, thresholds and parameter selection
 results/tables/test/           Test metrics, comparisons, cases and robustness results
-results/figures/               Seven report figures in PDF format
-results/report/                Figure/table reconstruction scripts and numerical inputs
+results/figures/               Main-report and clean-query figures
+results/report/                Report reconstruction scripts, numerical inputs and insertable clean-query section
 docs/                          Setup, provenance and third-party notices
 requirements-inspection.txt    Lightweight Python inspection/plotting requirements
 .gitignore                     Excludes private settings and generated material
@@ -94,19 +90,13 @@ Paths may be absolute or relative to the project root. Use actual local location
 3. Open **`final_project.mlx`** and click **Run All**.
 4. After completion, inspect the outputs and save the Live Script.
 
-Sections 1–11 explain the DSP on a fixed example; Sections 12–14 generate development data and select parameters; Sections 15–25 process test data, calculate metrics and present the analysis. Each section retains its code, results and interpretation. Each Run All creates a new `runs/experiment_en_*` directory and recomputes the experiment. It does not automatically reuse previous results.
+Sections 1–11 explain the DSP on a fixed example; Sections 12–14 generate development data and select parameters; Sections 15–24 process test data and present the main analyses. Section 25 adds the clean-query reference and clean-input enhancement checks; Section 26 summarizes the findings. Each section retains its code, results and interpretation. Each Run All creates a new `runs/experiment_en_*` directory and recomputes the main experiment and the clean-query checks. It does not automatically reuse previous results.
 
 A run generates input audio, traditional and DeepFilterNet outputs, embeddings and scores, development selections, test summaries, case analyses, bootstrap results, diagnostic files and logs. The completed run is marked by `stepwise_completed.mat`. Batch progress and warnings are written to that run's logs. Full recomputation requires processing time and disk space.
 
 ### Inspect included results without model inference
 
-Open the MLX to read its saved tables and figures without clicking Run All. Alternatively, with MATLAB Current Folder set to the project directory, run:
-
-```matlab
-Inspect_Results
-```
-
-This reads the included test summary and displays the main EER comparison. It does not need source audio, Python or pretrained models. [Included result tables](results/tables/) and [report figures](results/figures/) are already available; they are not regenerated merely by opening the project.
+Open the MLX to read its saved tables and figures without clicking Run All. The [included result tables](results/tables/) and [report figures](results/figures/) remain available without model inference. To check the recorded clean-query scores in MATLAB, clear the workspace and execute only Section 25; it recalculates the metrics and draws the score distributions from saved numerical data. This does not need Python, source audio or model weights.
 
 For optional report figure/table reconstruction from the included numerical inputs:
 
@@ -128,3 +118,15 @@ These scripts regenerate plots and LaTeX table bodies under `results/report/`; t
 - **DeepFilterNet3:** H. Schröter and colleagues; [DeepFilterNet project](https://github.com/Rikorose/DeepFilterNet), using the fixed executable and model described above.
 
 Dataset sources, licensing information and third-party software acknowledgements are documented in the [third-party notices](docs/THIRD_PARTY_NOTICES.md) and [source and license audit](protocol/SOURCE_AND_LICENSE.md). Original dataset audio is not redistributed.
+
+## Clean-query reference integrated into the main project
+
+Open `final_project.mlx`: Section 25 contains the supplementary check and Section 26 contains the final summary. The existing main results remain unchanged. Clean EER is 0.000%; default SS and DeepFilterNet give 0.167% and 0.000%. At the unchanged development threshold, BER is 1.250%, 2.000% and 1.500%, respectively. Each clean condition uses 60 genuine and 600 external trials.
+
+- Results and trial scores: [results/tables/clean_query](results/tables/clean_query/)
+- Provenance and validation: [results/audits/clean_query](results/audits/clean_query/)
+- Method and reproduction: [docs/CLEAN_QUERY_EXPERIMENT.md](docs/CLEAN_QUERY_EXPERIMENT.md)
+- Recording sequence: [docs/VIDEO_ADDENDUM.md](docs/VIDEO_ADDENDUM.md)
+- Insertable report fragment: [results/report/sections/clean_query.tex](results/report/sections/clean_query.tex)
+
+Full Run All runs fresh clean-query inference for the current experiment. To inspect the recorded clean results without inference, clear the MATLAB workspace and run only Section 25, or read its saved output. The redundant standalone clean-query notebook and the previous main copies are archived outside this active project; see the merge receipt for their backup paths.
