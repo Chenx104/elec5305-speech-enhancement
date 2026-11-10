@@ -1,5 +1,6 @@
 
-# ELEC5305: Do better denoising metrics correspond to better speaker verification?
+# When Better Denoising Does Not Mean Better Speaker Verification
+## *An Empirical Study of Speech Enhancement and Speaker Identity Preservation*
 
 Chenxin Zhang
 
