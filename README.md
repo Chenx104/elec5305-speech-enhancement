@@ -18,3 +18,5 @@ The final project investigates the relationship between speech enhancement quali
 The complete implementation, reproducibility instructions, verified experimental results, and figures are available in the [Final Project folder](final_project/).
 
 **Main MATLAB entry point:** [final_project.mlx](final_project/final_project.mlx)
+
+**Video Demonstration:** https://drive.google.com/file/d/1CJWbgwF0m9iKo-bGfgKOrhbBr-NwfsW5/view?usp=sharing
